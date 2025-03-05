@@ -2,6 +2,8 @@
 #include "Gizmos.h"
 #include "glm/ext.hpp"
 
+
+
 bool Application::Startup()
 {
     // if the initialisation fails, return false
@@ -35,9 +37,26 @@ bool Application::Startup()
     view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
     projection = glm::perspective(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.0f);
 
+    shader.loadShader(aie::eShaderStage::VERTEX, "../bin/Shaders/Vertex/Simple.vert");
+    shader.loadShader(aie::eShaderStage::FRAGMENT, "../bin/Shaders/Fragment/Simple.Frag");
+
+    if (!shader.link())
+    {
+        printf("Shader Error: %s\n", shader.getLastError());
+        return false;
+    }
+    mesh.Initialise();
+
+    quadTransform = { 10, 0, 0, 0,
+                       0, 10, 0, 0,
+                       0, 0, 10, 0,
+                       0, 0, 0, 1 };
 
     glClearColor(0.25f, 0.25f, 0.25f, 1);
     glEnable(GL_DEPTH_TEST);
+
+
+    
 }
 
 bool Application::Update()
@@ -73,6 +92,15 @@ void Application::Draw()
     }
 
     aie::Gizmos::draw(projection * view);
+
+    // bind shader
+    shader.bind();
+
+    // bind transform
+    auto pvm = projection * view * quadTransform;
+    shader.bindUniform("ProjectionViewModel", pvm);
+
+    mesh.Draw();
 
     // swap double buffer windows
     glfwSwapBuffers(window);

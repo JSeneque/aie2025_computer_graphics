@@ -2,6 +2,8 @@
 #include "glm/glm.hpp"
 #include "glad.h"
 #include "GLFW/glfw3.h"
+#include "Mesh.h"
+#include "Shader.h"
 
 class Application
 {
@@ -13,6 +15,11 @@ protected:
 	glm::mat4 projection;
 
 	GLFWwindow* window;
+
+	Mesh mesh;
+
+	aie::ShaderProgram shader;
+	glm::mat4 quadTransform;
 
 public:
 	bool Startup();
