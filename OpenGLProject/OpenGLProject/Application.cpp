@@ -59,12 +59,14 @@ bool Application::Startup()
     
 }
 
-bool Application::Update()
+bool Application::Update(float dt)
 {
     if(glfwWindowShouldClose(window) || glfwGetKey(window, GLFW_KEY_ESCAPE))
     {
         return false;
     }
+
+    deltaTime += dt;
 
     // listens for inputs
     glfwPollEvents();
@@ -99,6 +101,7 @@ void Application::Draw()
     // bind transform
     auto pvm = projection * view * quadTransform;
     shader.bindUniform("ProjectionViewModel", pvm);
+    shader.bindUniform("time", deltaTime);
 
     mesh.Draw();
 

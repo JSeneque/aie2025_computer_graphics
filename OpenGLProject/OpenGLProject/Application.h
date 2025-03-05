@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 
+
 class Application
 {
 protected:
@@ -21,9 +22,11 @@ protected:
 	aie::ShaderProgram shader;
 	glm::mat4 quadTransform;
 
+	float deltaTime;
+
 public:
 	bool Startup();
-	bool Update();
+	bool Update(float dt);
 	void Draw();
 	void Shutdown();
 };
