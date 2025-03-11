@@ -45,7 +45,7 @@ bool Application::Startup()
         printf("Shader Error: %s\n", shader.getLastError());
         return false;
     }
-    mesh.Initialise();
+    mesh.InitialiseQuad();
 
     quadTransform = { 10, 0, 0, 0,
                        0, 10, 0, 0,
@@ -54,8 +54,6 @@ bool Application::Startup()
 
     glClearColor(0.25f, 0.25f, 0.25f, 1);
     glEnable(GL_DEPTH_TEST);
-
-
     
 }
 
