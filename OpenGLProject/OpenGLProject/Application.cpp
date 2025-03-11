@@ -45,11 +45,11 @@ bool Application::Startup()
         printf("Shader Error: %s\n", shader.getLastError());
         return false;
     }
-    mesh.InitialiseQuad();
+    mesh.InitialiseFromFile("../bin/Models/stanford/bunny.obj");
 
-    quadTransform = { 10, 0, 0, 0,
-                       0, 10, 0, 0,
-                       0, 0, 10, 0,
+    quadTransform = { 0.5, 0, 0, 0,
+                       0, 0.5, 0, 0,
+                       0, 0, 0.5, 0,
                        0, 0, 0, 1 };
 
     glClearColor(0.25f, 0.25f, 0.25f, 1);
