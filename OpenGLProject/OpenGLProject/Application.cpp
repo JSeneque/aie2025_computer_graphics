@@ -34,6 +34,9 @@ bool Application::Startup()
 
     aie::Gizmos::create(10000, 10000, 0, 0);
 
+    s_instance = this;
+    glfwSetCursorPosCallback(window, &Application::SetMousePosition);
+
     view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
     projection = glm::perspective(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.0f);
 
@@ -54,6 +57,7 @@ bool Application::Startup()
 
     glClearColor(0.25f, 0.25f, 0.25f, 1);
     glEnable(GL_DEPTH_TEST);
+
     
 }
 
@@ -112,4 +116,10 @@ void Application::Shutdown()
     aie::Gizmos::destroy();
     glfwDestroyWindow(window);
     glfwTerminate();
+}
+
+void Application::SetMousePosition(GLFWwindow* window, double x, double y)
+{
+    s_instance->m_mousePosition.x = (float)x;
+    s_instance->m_mousePosition.y = (float)y;
 }
