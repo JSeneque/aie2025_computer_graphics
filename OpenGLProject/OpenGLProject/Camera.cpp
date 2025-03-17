@@ -34,12 +34,18 @@ void Camera::Update(float dt, GLFWwindow* window)
     glm::vec3 up(0, 1, 0);
 
     // capture the movement keys
-    if (glfwGetKey(window, GLFW_KEY_W)) m_position += forward * dt;
-    if (glfwGetKey(window, GLFW_KEY_S)) m_position -= forward * dt;
-    if (glfwGetKey(window, GLFW_KEY_A)) m_position -= right * dt;
-    if (glfwGetKey(window, GLFW_KEY_D)) m_position += right * dt;
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) m_position += up * dt;
-    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) m_position -= up * dt;
+    if (glfwGetKey(window, GLFW_KEY_W)) 
+        m_position += forward * dt;
+    if (glfwGetKey(window, GLFW_KEY_S)) 
+        m_position -= forward * dt;
+    if (glfwGetKey(window, GLFW_KEY_A)) 
+        m_position -= right * dt;
+    if (glfwGetKey(window, GLFW_KEY_D)) 
+        m_position += right * dt;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) 
+        m_position += up * dt;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) 
+        m_position -= up * dt;
 
     glm::vec2 mouseDelta = Application::Get()->GetMouseDelta();
 

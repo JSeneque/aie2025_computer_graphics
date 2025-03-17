@@ -97,6 +97,20 @@ void Application::Draw()
 
     aie::Gizmos::addTransform(glm::mat4(1));
 
+    //aie::Gizmos::draw(projection * view);
+    glm::mat4 pv = camera.GetProjectionMatrix(windowWidth, windowHeight) * camera.GetViewMatrix();
+
+    // bind shader
+    shader.bind();
+
+    // bind transform
+    //auto pvm = projection * view * quadTransform;
+    auto pvm = pv * quadTransform;
+    shader.bindUniform("ProjectionViewModel", pvm);
+    shader.bindUniform("time", deltaTime);
+
+    mesh.Draw();
+
     glm::vec4 white{ 1 };
     glm::vec4 black{ 0, 0, 0, 1 };
 
@@ -106,17 +120,7 @@ void Application::Draw()
         aie::Gizmos::addLine(glm::vec3{ 10, 0, -10 + i }, glm::vec3{ -10, 0, -10 + i }, i == 10 ? white : black);
     }
 
-    aie::Gizmos::draw(projection * view);
-
-    // bind shader
-    shader.bind();
-
-    // bind transform
-    auto pvm = projection * view * quadTransform;
-    shader.bindUniform("ProjectionViewModel", pvm);
-    shader.bindUniform("time", deltaTime);
-
-    mesh.Draw();
+    aie::Gizmos::draw(pv);
 
     // swap double buffer windows
     glfwSwapBuffers(window);
