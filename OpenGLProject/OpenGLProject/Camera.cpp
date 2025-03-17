@@ -1,6 +1,6 @@
+#include "Application.h"
 #include "Camera.h"
 #include <glm/ext.hpp>
-
 
 
 glm::mat4 Camera::GetViewMatrix()
@@ -40,4 +40,14 @@ void Camera::Update(float dt, GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_D)) m_position += right * dt;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) m_position += up * dt;
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) m_position -= up * dt;
+
+    glm::vec2 mouseDelta = Application::Get()->GetMouseDelta();
+
+    const float turnSpeed = 0.1f;
+    // if the right button is down, increment theta and phi
+    if (glfwGetMouseButton(window, 1))
+    {
+        theta += turnSpeed * mouseDelta.x;
+        phi -= turnSpeed * mouseDelta.y;
+    }
 }

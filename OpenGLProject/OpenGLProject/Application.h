@@ -6,7 +6,6 @@
 #include "Shader.h"
 #include "Camera.h"
 
-
 class Application
 {
 protected:
@@ -26,22 +25,30 @@ protected:
 	float deltaTime;
 
 	static Application* s_instance;
-	glm::vec2 m_mousePosition;
 
+	glm::vec2 m_mousePosition;
+	glm::vec2 m_lastMousePosition;
 	
 	Camera camera;
 
-
+	
 public:
+	//Application() {}
 	bool Startup();
 	bool Update(float dt);
 	void Draw();
 	void Shutdown();
 	
 	// singleton pattern
-	static Application* get() { return  s_instance; }
+	static Application* Get();
+
+	// mouse related functions
 	glm::vec2 GetMousePosition() { return m_mousePosition;  }
-	void SetMousePosition(GLFWwindow* window, double x, double y);
+	static void SetMousePosition(GLFWwindow* window, double x, double y);
+	glm::vec2 GetMouseDelta()
+	{
+		return m_mousePosition - m_lastMousePosition;
+	}
 
 };
 

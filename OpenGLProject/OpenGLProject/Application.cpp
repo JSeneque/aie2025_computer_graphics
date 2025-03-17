@@ -2,7 +2,7 @@
 #include "Gizmos.h"
 #include "glm/ext.hpp"
 
-
+Application* Application::s_instance = nullptr;
 
 bool Application::Startup()
 {
@@ -70,12 +70,23 @@ bool Application::Update(float dt)
 
     deltaTime += dt;
 
+    camera.Update(dt, window);
+
+    m_lastMousePosition = m_mousePosition;
+    
     // listens for inputs
     glfwPollEvents();
 
     // Put your updates here
 
     return true;
+
+    
+
+    m_lastMousePosition = m_mousePosition;
+
+    return glfwWindowShouldClose(window) == false &&
+        glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS;
 }
 
 void Application::Draw()
@@ -116,6 +127,14 @@ void Application::Shutdown()
     aie::Gizmos::destroy();
     glfwDestroyWindow(window);
     glfwTerminate();
+}
+
+Application* Application::Get()
+{
+    if (s_instance != nullptr)
+    {
+        return  s_instance; 
+    }
 }
 
 void Application::SetMousePosition(GLFWwindow* window, double x, double y)

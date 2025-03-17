@@ -11,7 +11,8 @@ int main()
     auto start = timer.now();
     double deltaTime = 0.0f;
 
-    Application* app = new Application;
+    Application* app = new Application();
+
     if (app->Startup()) {
         while (app->Update(deltaTime))
         {
