@@ -117,7 +117,7 @@ void Mesh::InitialiseFromFile(const char* fileName)
 	for (int i = 0; i < numV; ++i) 
 	{
 		vertices[i].position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1);
-		vertices[i].normal = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 0);
+		vertices[i].normal = glm::vec4(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z, 0);
 		//TODO: UVS
 
 
@@ -144,4 +144,35 @@ void Mesh::Draw()
 	
 }
 
-// 1:22:27
+void Mesh::ApplyMaterial(aie::ShaderProgram* shader)
+{
+	shader->bindUniform("Ka", Ka);
+	shader->bindUniform("Kd", Kd);
+	shader->bindUniform("Ks", Ks);
+	shader->bindUniform("specularPower", specularPower);
+}
+
+void Mesh::LoadMaterial(const char* fileName)
+{
+	std::fstream file(fileName, std::ios::in);
+	std::string line;
+	std::string header;
+	char buffer[256];
+	while (!file.eof())
+	{
+		file.getline(buffer, 256);
+		line = buffer;
+		std::stringstream ss(line,
+			std::stringstream::in | std::stringstream::out);
+		if (line.find("Ka") == 0)
+			ss >> header >> Ka.x >> Ka.y >> Ka.z;
+		else if (line.find("Ks") == 0)
+			ss >> header >> Ks.x >> Ks.y >> Ks.z;
+		else if (line.find("Kd") == 0)
+			ss >> header >> Kd.x >> Kd.y >> Kd.z;
+		else if (line.find("Ns") == 0)
+			ss >> header >> specularPower;
+	}
+}
+
+

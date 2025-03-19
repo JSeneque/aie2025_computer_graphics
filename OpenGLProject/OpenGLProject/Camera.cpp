@@ -3,6 +3,11 @@
 #include <glm/ext.hpp>
 
 
+glm::vec3 Camera::GetPosition() const
+{
+    return m_position;
+}
+
 glm::mat4 Camera::GetViewMatrix()
 {
     // calculate theta and phi in radians

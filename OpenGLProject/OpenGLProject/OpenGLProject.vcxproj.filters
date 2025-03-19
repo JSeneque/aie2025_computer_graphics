@@ -22,6 +22,9 @@
     <Filter Include="Fragment">
       <UniqueIdentifier>{e446ee07-6ade-4fac-a61b-f81d07aa7295}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ImGUI">
+      <UniqueIdentifier>{ccb5d2b9-f50b-490b-8200-f3725996bcfa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OpenGLProject.cpp">
@@ -45,6 +48,12 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dep\imgui\imgui_draw.cpp">
+      <Filter>ImGUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Gizmos.h">
@@ -61,6 +70,15 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dep\imgui\imconfig.h">
+      <Filter>ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dep\imgui\imgui_internal.h">
+      <Filter>ImGUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

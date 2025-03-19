@@ -45,8 +45,8 @@ bool Application::Startup()
     m_phongShader.loadShader(aie::eShaderStage::VERTEX, "../bin/Shaders/Vertex/phong.vert");
     m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "../bin/Shaders/Fragment/phong.frag");
 
-    m_light.colour = { 1, 1, 0 };
-    //m_ambientLight = { 0.25f, 0.25f, 0.25f };
+    m_light.colour = { 1, 1, 1 };
+    m_ambientLight = { 0.25f, 0.25f, 0.25f };
 
     if (!shader.link())
     {
@@ -60,6 +60,7 @@ bool Application::Startup()
         return false;
     }
     mesh.InitialiseFromFile("../bin/Models/stanford/bunny.obj");
+    mesh.LoadMaterial("../bin/Models/stanford/bunny.mtl");
 
     quadTransform = { 0.5, 0, 0, 0,
                        0, 0.5, 0, 0,
@@ -96,9 +97,6 @@ bool Application::Update(float dt)
 
     return true;
 
-    
-
-    
 }
 
 void Application::Draw()
@@ -119,25 +117,20 @@ void Application::Draw()
     //auto pvm = projection * view * quadTransform;
     auto pvm = pv * quadTransform;
     shader.bindUniform("ProjectionViewModel", pvm);
-    //shader.bindUniform("Project", deltaTime);
-
-
 
     // bind phong shader program
     m_phongShader.bind();
-    // bind light
-        
+       
     // bind transform and lighting
     m_phongShader.bindUniform("ProjectionViewModel", pvm);
     m_phongShader.bindUniform("ModelMatrix", quadTransform);
     m_phongShader.bindUniform("AmbientColour", m_ambientLight);
     m_phongShader.bindUniform("LightColour", m_light.colour);
-    m_phongShader.bindUniform("LightDirection", m_light.direction);   
-    
+    m_phongShader.bindUniform("LightDirection", m_light.direction);  
 
+    m_phongShader.bindUniform("cameraPosition", camera.GetPosition());
 
-
-
+    mesh.ApplyMaterial(&m_phongShader);
 
     mesh.Draw();
 

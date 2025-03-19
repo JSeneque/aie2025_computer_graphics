@@ -1,5 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "Shader.h"
+#include <fstream>
+#include <sstream>
 
 struct Vertex {
 	glm::vec4 position;
@@ -11,6 +14,10 @@ class Mesh
 protected:
 	unsigned int triCount;
 	unsigned int vao, vbo, ibo;
+	glm::vec3 Ka;			// ambient colour of the surface
+	glm::vec3 Kd;			// diffuse colour of the surface
+	glm::vec3 Ks;			// specular colour of the surface
+	float specularPower;	// tightness of specular highlights
 
 public:
 	Mesh() : triCount(0), vao(0), vbo(0), ibo(0) {};
@@ -23,6 +30,9 @@ public:
 	void InitialiseFromFile(const char* fileName); 
 
 	virtual void Draw();
+
+	void ApplyMaterial(aie::ShaderProgram* shader);
+	void LoadMaterial(const char* fileName);
 };
 
 

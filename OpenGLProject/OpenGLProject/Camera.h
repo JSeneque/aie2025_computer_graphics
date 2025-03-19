@@ -17,6 +17,8 @@ public:
 	Camera() {}
 	Camera(glm::vec3 initialPos) : m_position(initialPos), theta(0), phi(0), turnSpeed(0.1f) {};
 
+	glm::vec3 GetPosition() const;
+
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetProjectionMatrix(float w, float h);
 	void Update(float dt, GLFWwindow* window);
