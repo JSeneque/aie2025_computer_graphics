@@ -20,7 +20,11 @@ protected:
 	Mesh mesh;
 
 	aie::ShaderProgram shader;
+	aie::ShaderProgram m_phongShader;
+
 	glm::mat4 quadTransform;
+
+	
 
 	float deltaTime;
 
@@ -30,6 +34,14 @@ protected:
 	glm::vec2 m_lastMousePosition;
 	
 	Camera camera;
+
+	struct Light {
+		glm::vec3 direction;
+		glm::vec3 colour;
+	};
+
+	Light m_light;
+	glm::vec3 m_ambientLight;
 
 	
 public:

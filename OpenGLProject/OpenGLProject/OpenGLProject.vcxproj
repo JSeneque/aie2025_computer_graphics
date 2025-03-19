@@ -171,7 +171,9 @@
     <ClInclude Include="Shader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\bin\Shaders\Fragment\phong.frag" />
     <None Include="..\bin\Shaders\Fragment\Simple.frag" />
+    <None Include="..\bin\Shaders\Vertex\phong.vert" />
     <None Include="..\bin\Shaders\Vertex\Simple.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

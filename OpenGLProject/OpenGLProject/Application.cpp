@@ -41,11 +41,22 @@ bool Application::Startup()
     projection = glm::perspective(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.0f);
 
     shader.loadShader(aie::eShaderStage::VERTEX, "../bin/Shaders/Vertex/Simple.vert");
-    shader.loadShader(aie::eShaderStage::FRAGMENT, "../bin/Shaders/Fragment/Simple.Frag");
+    shader.loadShader(aie::eShaderStage::FRAGMENT, "../bin/Shaders/Fragment/Simple.frag");
+    m_phongShader.loadShader(aie::eShaderStage::VERTEX, "../bin/Shaders/Vertex/phong.vert");
+    m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "../bin/Shaders/Fragment/phong.frag");
+
+    m_light.colour = { 1, 1, 0 };
+    //m_ambientLight = { 0.25f, 0.25f, 0.25f };
 
     if (!shader.link())
     {
         printf("Shader Error: %s\n", shader.getLastError());
+        return false;
+    }
+
+    if (!m_phongShader.link())
+    {
+        printf("Shader Error: %s\n", m_phongShader.getLastError());
         return false;
     }
     mesh.InitialiseFromFile("../bin/Models/stanford/bunny.obj");
@@ -73,20 +84,21 @@ bool Application::Update(float dt)
     camera.Update(dt, window);
 
     m_lastMousePosition = m_mousePosition;
-    
+
     // listens for inputs
     glfwPollEvents();
 
     // Put your updates here
+    float time = glfwGetTime();
+
+    // rotate the light
+    m_light.direction = glm::normalize(glm::vec3(glm::cos(time * 2), glm::sin(time * 2), 0));
 
     return true;
 
     
 
-    m_lastMousePosition = m_mousePosition;
-
-    return glfwWindowShouldClose(window) == false &&
-        glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS;
+    
 }
 
 void Application::Draw()
@@ -107,7 +119,25 @@ void Application::Draw()
     //auto pvm = projection * view * quadTransform;
     auto pvm = pv * quadTransform;
     shader.bindUniform("ProjectionViewModel", pvm);
-    shader.bindUniform("time", deltaTime);
+    //shader.bindUniform("Project", deltaTime);
+
+
+
+    // bind phong shader program
+    m_phongShader.bind();
+    // bind light
+        
+    // bind transform and lighting
+    m_phongShader.bindUniform("ProjectionViewModel", pvm);
+    m_phongShader.bindUniform("ModelMatrix", quadTransform);
+    m_phongShader.bindUniform("AmbientColour", m_ambientLight);
+    m_phongShader.bindUniform("LightColour", m_light.colour);
+    m_phongShader.bindUniform("LightDirection", m_light.direction);   
+    
+
+
+
+
 
     mesh.Draw();
 

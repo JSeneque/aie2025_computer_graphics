@@ -60,6 +60,9 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	glEnableVertexAttribArray(0);
 	// define it
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	// enable second element as normal
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)16);
 	
 	// bind indices if there are any
 	if (indexCount != 0) {
@@ -114,7 +117,8 @@ void Mesh::InitialiseFromFile(const char* fileName)
 	for (int i = 0; i < numV; ++i) 
 	{
 		vertices[i].position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1);
-		//TODO: UVS, NORMALS
+		vertices[i].normal = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 0);
+		//TODO: UVS
 
 
 	}

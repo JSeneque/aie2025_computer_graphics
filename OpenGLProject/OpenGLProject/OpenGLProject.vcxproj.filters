@@ -70,5 +70,11 @@
     <None Include="..\bin\Shaders\Vertex\Simple.vert">
       <Filter>Vertex</Filter>
     </None>
+    <None Include="..\bin\Shaders\Vertex\phong.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\bin\Shaders\Fragment\phong.frag">
+      <Filter>Fragment</Filter>
+    </None>
   </ItemGroup>
 </Project>
