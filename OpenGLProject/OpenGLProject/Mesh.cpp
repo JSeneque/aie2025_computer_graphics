@@ -56,10 +56,11 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	// fill vertex buffer
 	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(Vertex), vertices, GL_STATIC_DRAW);
+
 	// enable the first element as position
 	glEnableVertexAttribArray(0);
-	// define it
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+
 	// enable second element as normal
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)16);

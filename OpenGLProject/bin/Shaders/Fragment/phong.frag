@@ -39,5 +39,5 @@ void main() {
 	
 
 	// output lambert as grayscale
-	FragColour = vec4 ( ambient + diffuse + specular, 1);
+	FragColour = clamp(vec4 ( ambient + diffuse + specular, 1), 0, 1);
 }

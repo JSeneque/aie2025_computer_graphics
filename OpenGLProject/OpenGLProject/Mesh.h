@@ -9,6 +9,8 @@ struct Vertex {
 	glm::vec4 normal;
 };
 
+namespace aie { class ShaderProgram; }
+
 class Mesh
 {
 protected:

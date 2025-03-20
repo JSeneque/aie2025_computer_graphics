@@ -6,6 +6,10 @@
 #include "Shader.h"
 #include "Camera.h"
 
+struct Light {
+	glm::vec3 direction;
+};
+
 class Application
 {
 protected:
@@ -22,7 +26,7 @@ protected:
 	aie::ShaderProgram shader;
 	aie::ShaderProgram m_phongShader;
 
-	glm::mat4 quadTransform;
+	glm::mat4 bunnyTransform;
 
 	
 
@@ -40,7 +44,7 @@ protected:
 		glm::vec3 colour;
 	};
 
-	Light m_light;
+	Light directionalLight;
 	glm::vec3 m_ambientLight;
 
 	

@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "Gizmos.h"
 #include "glm/ext.hpp"
+#include "imgui_glfw3.h"
 
 Application* Application::s_instance = nullptr;
 
@@ -34,6 +35,8 @@ bool Application::Startup()
 
     aie::Gizmos::create(10000, 10000, 0, 0);
 
+    //aie::ImGui_Init(window, true);
+
     s_instance = this;
     glfwSetCursorPosCallback(window, &Application::SetMousePosition);
 
@@ -45,8 +48,8 @@ bool Application::Startup()
     m_phongShader.loadShader(aie::eShaderStage::VERTEX, "../bin/Shaders/Vertex/phong.vert");
     m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "../bin/Shaders/Fragment/phong.frag");
 
-    m_light.colour = { 1, 1, 1 };
-    m_ambientLight = { 0.25f, 0.25f, 0.25f };
+    directionalLight.colour = { 0, 1, 0 };
+    m_ambientLight = { 1, 0, 0 };
 
     if (!shader.link())
     {
@@ -59,10 +62,10 @@ bool Application::Startup()
         printf("Shader Error: %s\n", m_phongShader.getLastError());
         return false;
     }
-    mesh.InitialiseFromFile("../bin/Models/stanford/bunny.obj");
-    mesh.LoadMaterial("../bin/Models/stanford/bunny.mtl");
+    mesh.InitialiseFromFile("../bin/Models/stanford/dragon.obj");
+    mesh.LoadMaterial("../bin/Models/stanford/dragon.mtl");
 
-    quadTransform = { 0.5, 0, 0, 0,
+    bunnyTransform = { 0.5, 0, 0, 0,
                        0, 0.5, 0, 0,
                        0, 0, 0.5, 0,
                        0, 0, 0, 1 };
@@ -75,10 +78,13 @@ bool Application::Startup()
 
 bool Application::Update(float dt)
 {
+    //aie::ImGui_NewFrame();
+
     if(glfwWindowShouldClose(window) || glfwGetKey(window, GLFW_KEY_ESCAPE))
     {
         return false;
     }
+    
 
     deltaTime += dt;
 
@@ -86,14 +92,16 @@ bool Application::Update(float dt)
 
     m_lastMousePosition = m_mousePosition;
 
-    // listens for inputs
-    glfwPollEvents();
+    //printf("Camera Position x: %d, %d %d \n", camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
 
     // Put your updates here
     float time = glfwGetTime();
+    directionalLight.direction = glm::normalize(glm::vec3(glm::cos(time * 2), glm::sin(time * 2), 0));
+    //ImGui::Begin("Light Settings");
+    //ImGui::DragFloat3("SunlightDirection", dr)
 
-    // rotate the light
-    m_light.direction = glm::normalize(glm::vec3(glm::cos(time * 2), glm::sin(time * 2), 0));
+        // listens for inputs
+    glfwPollEvents();
 
     return true;
 
@@ -114,8 +122,7 @@ void Application::Draw()
     shader.bind();
 
     // bind transform
-    //auto pvm = projection * view * quadTransform;
-    auto pvm = pv * quadTransform;
+    auto pvm = pv * bunnyTransform;
     shader.bindUniform("ProjectionViewModel", pvm);
 
     // bind phong shader program
@@ -123,10 +130,10 @@ void Application::Draw()
        
     // bind transform and lighting
     m_phongShader.bindUniform("ProjectionViewModel", pvm);
-    m_phongShader.bindUniform("ModelMatrix", quadTransform);
+    m_phongShader.bindUniform("ModelMatrix", bunnyTransform);
     m_phongShader.bindUniform("AmbientColour", m_ambientLight);
-    m_phongShader.bindUniform("LightColour", m_light.colour);
-    m_phongShader.bindUniform("LightDirection", m_light.direction);  
+    m_phongShader.bindUniform("LightColour", directionalLight.colour);
+    m_phongShader.bindUniform("LightDirection", directionalLight.direction);
 
     m_phongShader.bindUniform("cameraPosition", camera.GetPosition());
 
@@ -145,12 +152,15 @@ void Application::Draw()
 
     aie::Gizmos::draw(pv);
 
+    //ImGui::Render();
+
     // swap double buffer windows
     glfwSwapBuffers(window);
 }
 
 void Application::Shutdown()
 {
+    //aie::ImGui_Shutdown();
     aie::Gizmos::destroy();
     glfwDestroyWindow(window);
     glfwTerminate();
