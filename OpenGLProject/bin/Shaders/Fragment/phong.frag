@@ -3,6 +3,7 @@
 
 in vec4 vPosition;
 in vec3 vNormal;
+in vec2 vTexCoords;
 
 uniform vec3 cameraPosition;
 
@@ -15,29 +16,41 @@ uniform vec3 Kd;
 uniform vec3 Ks;
 uniform float specularPower;
 
+uniform sampler2D diffuseTex;
+
 out vec4 FragColour;
 
-void main() {
-	// normalise both the normal and light direction
-	vec3 N = normalize(vNormal);
-	vec3 L = normalize(LightDirection);
+float CalculateLambertTerm(vec3 N, vec3 L) {
+	return max(0, min( 1, dot( N, -L ) ) );
+}
 
+vec3 CalculateSpecular(float SpecularTerm) {
+	return LightColour * Ks * SpecularTerm;
+}
 
-	// lambert term (negate light direction)
-	float lambertTerm = max(0, min( 1, dot( N, -L ) ) );
+vec3 CalculateAmbientColour (vec3 T) {
+	return AmbientColour * Ka * T;
+}
 
+vec3 CalculateDiffuse(float lambertTerm, vec3 T) {
+	return LightColour * Kd * lambertTerm * T;
+}
+
+float CalculateSpecularTerm(vec3 N, vec3 L) {
 	vec3 V = normalize(cameraPosition - vPosition.xyz);
 	vec3 R = reflect( L, N );
 
-	// calculate specular term
-	float specularTerm = pow( max( 0, dot( R, V ) ), specularPower);
-	
-	// calculate each colour property
-	vec3 ambient = AmbientColour * Ka;
-	vec3 diffuse = LightColour * Kd * lambertTerm;
-	vec3 specular = LightColour * Ks * specularTerm;
-	
+	return pow( max( 0, dot( R, V ) ), specularPower);
+}
+
+void main() {
+
+	float lambertTerm = CalculateLambertTerm(normalize(vNormal), normalize(LightDirection));
+	float specularTerm = CalculateSpecularTerm(normalize(vNormal), normalize(LightDirection));
+
+	// what is the texture colour
+	vec3 textureColour = texture(diffuseTex, vTexCoords).rgb;
 
 	// output lambert as grayscale
-	FragColour = clamp(vec4 ( ambient + diffuse + specular, 1), 0, 1);
+	FragColour = vec4 ( CalculateAmbientColour(textureColour) + CalculateDiffuse(lambertTerm, textureColour) + CalculateSpecular(specularTerm), 1);
 }

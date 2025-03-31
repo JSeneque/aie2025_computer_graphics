@@ -8,7 +8,7 @@
 #include "imgui_glfw3.h"
 
 // GL_CORE/GLFW
-#include "gl_core_4_4.h"
+#include "glad.h"
 #include <GLFW/glfw3.h>
 
 #ifdef _WIN32

@@ -3,7 +3,7 @@
 #include "assimp/scene.h"
 #include "assimp/cimport.h"
 #include <vector>
-
+#include "imgui_glfw3.h"
 
 Mesh::~Mesh()
 {
@@ -36,7 +36,17 @@ void Mesh::InitialiseQuad()
 	vertices[2].position = { -0.5f, 0, -0.5f, 1 };
 	vertices[3].position = { 0.5f, 0, -0.5f, 1 };
 
+	vertices[0].texCoord = { 0.0, 1.0 };
+	vertices[1].texCoord = { 1.0, 1.0 };
+	vertices[2].texCoord = { 0.0, 0.0 };
+	vertices[3].texCoord = { 1.0, 0.0 };
+
 	unsigned int indices[6] = { 0, 1, 2, 2, 1, 3 };
+
+	Ka = glm::vec3(0);
+	Kd = glm::vec3(1, 0.5, 1);
+	Ks = glm::vec3(1, 0, 1);
+	specularPower = 0.0f;
 
 	Initialise(4, vertices, 6, indices);
 
@@ -64,7 +74,11 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	// enable second element as normal
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)16);
-	
+
+	// enable third element as UVs
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)32);
+
 	// bind indices if there are any
 	if (indexCount != 0) {
 		glGenBuffers(1, &ibo);
@@ -119,14 +133,33 @@ void Mesh::InitialiseFromFile(const char* fileName)
 	{
 		vertices[i].position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1);
 		vertices[i].normal = glm::vec4(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z, 0);
-		//TODO: UVS
-
+		
+		// TODO: Look into not making an assumption
+		// does the array exists
+		if (mesh->mTextureCoords[0])
+		{
+			vertices[i].texCoord = glm::vec2(mesh->mTextureCoords[0][i].x, 1.0 - mesh->mTextureCoords[0][i].y);
+		}
+		else
+		{
+			vertices[i].texCoord = glm::vec2(0, 0);
+		}
 
 	}
 
 	Initialise(numV, vertices, indices.size(), indices.data());
 	delete[] vertices;
 
+}
+
+void Mesh::Update(float dt)
+{
+	ImGui::Begin("Material Settings");
+	ImGui::DragFloat3("Ambient", &Ka[0], 0.1f, 0.0f, 2.0f);
+	ImGui::DragFloat3("Diffuse", &Kd[0], 0.1f, 0.0f, 2.0f);
+	ImGui::DragFloat3("Specular", &Ks[0], 0.1f, 0.0f, 2.0f);
+	ImGui::DragFloat("Strength", &specularPower, 0.1f, 0.0f, 256.0f);
+	ImGui::End();
 }
 
 void Mesh::Draw()
@@ -151,6 +184,10 @@ void Mesh::ApplyMaterial(aie::ShaderProgram* shader)
 	shader->bindUniform("Kd", Kd);
 	shader->bindUniform("Ks", Ks);
 	shader->bindUniform("specularPower", specularPower);
+
+	// bind the diffuse texture to 0
+	texture.bind(0);
+	shader->bindUniform("diffuseTex", 0);
 }
 
 void Mesh::LoadMaterial(const char* fileName)
@@ -174,6 +211,11 @@ void Mesh::LoadMaterial(const char* fileName)
 		else if (line.find("Ns") == 0)
 			ss >> header >> specularPower;
 	}
+}
+
+void Mesh::LoadTexture(const char* fileName)
+{
+	texture.load(fileName);
 }
 
 

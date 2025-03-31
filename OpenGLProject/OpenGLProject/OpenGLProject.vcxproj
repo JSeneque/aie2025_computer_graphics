@@ -79,11 +79,11 @@
     <LibraryPath>$(SolutionDir)dep\assimp\out\build\x64-$(Configuration)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)dep\imgui;$(SolutionDir)dep\assimp\include;$(SolutionDir)dep\assimp\out\build\x64-$(Configuration)\include;$(SolutionDir)dep\imguip;$(SolutionDir)dep\assimp\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dep\imgui;$(SolutionDir)dep\assimp\include;$(SolutionDir)dep\assimp\out\build\x64-$(Configuration)\include;$(SolutionDir)dep\imguip;$(SolutionDir)dep\stb;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)dep\assimp\out\build\x64-$(Configuration)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)dep\imgui;$(SolutionDir)dep\assimp\include;$(SolutionDir)dep\assimp\out\build\x64-$(Configuration)\include;$(SolutionDir)dep\imguip;$(SolutionDir)dep\assimp\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dep\imgui;$(SolutionDir)dep\assimp\include;$(SolutionDir)dep\assimp\out\build\x64-$(Configuration)\include;$(SolutionDir)dep\imguip;$(SolutionDir)dep\stb;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)dep\assimp\out\build\x64-$(Configuration)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -161,9 +161,11 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Gizmos.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="imgui_glfw3.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="OpenGLProject.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dep\imgui\imconfig.h" />
@@ -172,8 +174,10 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Gizmos.h" />
+    <ClInclude Include="imgui_glfw3.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bin\Shaders\Fragment\phong.frag" />

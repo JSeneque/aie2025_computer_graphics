@@ -35,7 +35,7 @@ bool Application::Startup()
 
     aie::Gizmos::create(10000, 10000, 0, 0);
 
-    //aie::ImGui_Init(window, true);
+    aie::ImGui_Init(window, true);
 
     s_instance = this;
     glfwSetCursorPosCallback(window, &Application::SetMousePosition);
@@ -62,12 +62,21 @@ bool Application::Startup()
         printf("Shader Error: %s\n", m_phongShader.getLastError());
         return false;
     }
-    mesh.InitialiseFromFile("../bin/Models/stanford/dragon.obj");
-    mesh.LoadMaterial("../bin/Models/stanford/dragon.mtl");
+    dragonMesh.InitialiseFromFile("../bin/Models/stanford/dragon.obj");
+    dragonMesh.LoadMaterial("../bin/Models/stanford/dragon.mtl");
+    dragonMesh.LoadTexture("../bin/Textures/four_diffuse.tga");
+    quadMesh.LoadTexture("../bin/Textures/four_diffuse.tga");
 
-    bunnyTransform = { 0.5, 0, 0, 0,
+    dragonTransform = { 0.5, 0, 0, 0,
                        0, 0.5, 0, 0,
                        0, 0, 0.5, 0,
+                       0, 0, 0, 1 };
+
+    quadMesh.InitialiseQuad();
+
+    quadTransform = { 10.0, 0, 0, 0,
+                       0, 10.0, 0, 0,
+                       0, 0, 10.0, 0,
                        0, 0, 0, 1 };
 
     glClearColor(0.25f, 0.25f, 0.25f, 1);
@@ -78,7 +87,7 @@ bool Application::Startup()
 
 bool Application::Update(float dt)
 {
-    //aie::ImGui_NewFrame();
+    aie::ImGui_NewFrame();
 
     if(glfwWindowShouldClose(window) || glfwGetKey(window, GLFW_KEY_ESCAPE))
     {
@@ -96,10 +105,15 @@ bool Application::Update(float dt)
 
     // Put your updates here
     float time = glfwGetTime();
-    directionalLight.direction = glm::normalize(glm::vec3(glm::cos(time * 2), glm::sin(time * 2), 0));
-    //ImGui::Begin("Light Settings");
-    //ImGui::DragFloat3("SunlightDirection", dr)
+    //directionalLight.direction = glm::normalize(glm::vec3(glm::cos(time * 2), glm::sin(time * 2), 0));
+    
+    ImGui::Begin("Light Settings");
+    ImGui::DragFloat3("Sunlight Direction", &directionalLight.direction[0], 0.1f, -1.0f, 1.0f);
+    ImGui::DragFloat3("Sunlight Colour", &directionalLight.colour[0], 0.1f, 0.0f, 2.0f);
+    ImGui::End();
 
+    dragonMesh.Update(dt);
+    quadMesh.Update(dt);
         // listens for inputs
     glfwPollEvents();
 
@@ -122,7 +136,7 @@ void Application::Draw()
     shader.bind();
 
     // bind transform
-    auto pvm = pv * bunnyTransform;
+    auto pvm = pv * dragonTransform;
     shader.bindUniform("ProjectionViewModel", pvm);
 
     // bind phong shader program
@@ -130,16 +144,23 @@ void Application::Draw()
        
     // bind transform and lighting
     m_phongShader.bindUniform("ProjectionViewModel", pvm);
-    m_phongShader.bindUniform("ModelMatrix", bunnyTransform);
+    m_phongShader.bindUniform("ModelMatrix", dragonTransform);
     m_phongShader.bindUniform("AmbientColour", m_ambientLight);
     m_phongShader.bindUniform("LightColour", directionalLight.colour);
     m_phongShader.bindUniform("LightDirection", directionalLight.direction);
 
     m_phongShader.bindUniform("cameraPosition", camera.GetPosition());
 
-    mesh.ApplyMaterial(&m_phongShader);
+    dragonMesh.ApplyMaterial(&m_phongShader);
 
-    mesh.Draw();
+    dragonMesh.Draw();
+
+    // draw quad
+    pvm = pv * quadTransform;
+    m_phongShader.bindUniform("ProjectionViewModel", pvm);
+    m_phongShader.bindUniform("ModelMatrix", quadTransform);
+    dragonMesh.ApplyMaterial(&m_phongShader);
+    quadMesh.Draw();
 
     glm::vec4 white{ 1 };
     glm::vec4 black{ 0, 0, 0, 1 };
@@ -152,7 +173,7 @@ void Application::Draw()
 
     aie::Gizmos::draw(pv);
 
-    //ImGui::Render();
+    ImGui::Render();
 
     // swap double buffer windows
     glfwSwapBuffers(window);
@@ -160,7 +181,7 @@ void Application::Draw()
 
 void Application::Shutdown()
 {
-    //aie::ImGui_Shutdown();
+    aie::ImGui_Shutdown();
     aie::Gizmos::destroy();
     glfwDestroyWindow(window);
     glfwTerminate();
