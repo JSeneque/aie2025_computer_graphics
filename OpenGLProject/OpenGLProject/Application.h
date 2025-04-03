@@ -13,21 +13,21 @@ struct Light {
 class Application
 {
 protected:
-	const int windowWidth = 1280;
-	const int windowHeight = 720;
+	const int windowWidth = 1920;
+	const int windowHeight = 1080;
 
 	glm::mat4 view;
 	glm::mat4 projection;
 
 	GLFWwindow* window;
 
-	Mesh dragonMesh;
+	Mesh soulspearMesh;
 	Mesh quadMesh;
 
 	aie::ShaderProgram shader;
 	aie::ShaderProgram m_phongShader;
 
-	glm::mat4 dragonTransform;
+	glm::mat4 soulspearTransform;
 	glm::mat4 quadTransform;
 
 	float deltaTime;

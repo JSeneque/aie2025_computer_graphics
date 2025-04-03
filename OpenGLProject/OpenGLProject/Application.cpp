@@ -62,12 +62,12 @@ bool Application::Startup()
         printf("Shader Error: %s\n", m_phongShader.getLastError());
         return false;
     }
-    dragonMesh.InitialiseFromFile("../bin/Models/stanford/dragon.obj");
-    dragonMesh.LoadMaterial("../bin/Models/stanford/dragon.mtl");
-    dragonMesh.LoadTexture("../bin/Textures/four_diffuse.tga");
+    soulspearMesh.InitialiseFromFile("../bin/Models/stanford/soulspear.obj");
+    soulspearMesh.LoadMaterial("../bin/Models/stanford/soulspear.mtl");
+    soulspearMesh.LoadTexture("../bin/Textures/soulspear_diffuse.tga");
     quadMesh.LoadTexture("../bin/Textures/four_diffuse.tga");
 
-    dragonTransform = { 0.5, 0, 0, 0,
+    soulspearTransform = { 0.5, 0, 0, 0,
                        0, 0.5, 0, 0,
                        0, 0, 0.5, 0,
                        0, 0, 0, 1 };
@@ -93,7 +93,6 @@ bool Application::Update(float dt)
     {
         return false;
     }
-    
 
     deltaTime += dt;
 
@@ -101,20 +100,19 @@ bool Application::Update(float dt)
 
     m_lastMousePosition = m_mousePosition;
 
-    //printf("Camera Position x: %d, %d %d \n", camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
-
     // Put your updates here
     float time = glfwGetTime();
-    //directionalLight.direction = glm::normalize(glm::vec3(glm::cos(time * 2), glm::sin(time * 2), 0));
-    
+        
     ImGui::Begin("Light Settings");
+    ImGui::DragFloat3("Ambient Light", &m_ambientLight[0], 0.01f, -1.0f, 1.0f, "%.2f");
     ImGui::DragFloat3("Sunlight Direction", &directionalLight.direction[0], 0.1f, -1.0f, 1.0f);
     ImGui::DragFloat3("Sunlight Colour", &directionalLight.colour[0], 0.1f, 0.0f, 2.0f);
     ImGui::End();
 
-    dragonMesh.Update(dt);
+    soulspearMesh.Update(dt);
     quadMesh.Update(dt);
-        // listens for inputs
+
+    // listens for inputs
     glfwPollEvents();
 
     return true;
@@ -136,7 +134,7 @@ void Application::Draw()
     shader.bind();
 
     // bind transform
-    auto pvm = pv * dragonTransform;
+    auto pvm = pv * soulspearTransform;
     shader.bindUniform("ProjectionViewModel", pvm);
 
     // bind phong shader program
@@ -144,22 +142,21 @@ void Application::Draw()
        
     // bind transform and lighting
     m_phongShader.bindUniform("ProjectionViewModel", pvm);
-    m_phongShader.bindUniform("ModelMatrix", dragonTransform);
+    m_phongShader.bindUniform("ModelMatrix", soulspearTransform);
     m_phongShader.bindUniform("AmbientColour", m_ambientLight);
     m_phongShader.bindUniform("LightColour", directionalLight.colour);
     m_phongShader.bindUniform("LightDirection", directionalLight.direction);
 
     m_phongShader.bindUniform("cameraPosition", camera.GetPosition());
 
-    dragonMesh.ApplyMaterial(&m_phongShader);
-
-    dragonMesh.Draw();
+    soulspearMesh.ApplyMaterial(&m_phongShader);
+    soulspearMesh.Draw();
 
     // draw quad
     pvm = pv * quadTransform;
     m_phongShader.bindUniform("ProjectionViewModel", pvm);
     m_phongShader.bindUniform("ModelMatrix", quadTransform);
-    dragonMesh.ApplyMaterial(&m_phongShader);
+    quadMesh.ApplyMaterial(&m_phongShader);
     quadMesh.Draw();
 
     glm::vec4 white{ 1 };

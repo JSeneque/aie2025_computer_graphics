@@ -13,22 +13,20 @@ Mesh::~Mesh()
 
 void Mesh::InitialiseQuad()
 {
-	//Vertex vertices[6];
+	/*// check that the mesh is not initialised already
+	assert(vao == 0);
 
-	//// define 6 vertices for 2 triangles
-	//vertices[0].position = { -0.5f, 0, 0.5f, 1 };
-	//vertices[1].position = { 0.5f, 0, 0.5f, 1 };
-	//vertices[2].position = { -0.5f, 0, -0.5f, 1 };
+	// generate buffers
+	glGenBuffers(1, &vbo);
+	glGenVertexArrays(1, &vao);
 
-	//vertices[3].position = { -0.5f, 0, -0.5f, 1 };
-	//vertices[4].position = { 0.5f, 0, 0.5f, 1 };
-	//vertices[5].position = { 0.5f, 0, -0.5f, 1 };
+	// bind vertex array aka a mesh wrapper
+	glBindVertexArray(vao);
 
-	//Initialise(6, vertices);
+	// bind vertex buffer
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);*/
 
-
-	// with IBO
-	Vertex vertices[4];
+	Vertex vertices[6];
 
 	// define 6 vertices for 2 triangles
 	vertices[0].position = { -0.5f, 0, 0.5f, 1 };
