@@ -23,7 +23,7 @@ protected:
 	glm::vec3 Ks;			// specular colour of the surface
 	float specularPower;	// tightness of specular highlights
 
-	aie::Texture texture;
+	aie::Texture mapKd;
 
 public:
 	Mesh() : triCount(0), vao(0), vbo(0), ibo(0) {};

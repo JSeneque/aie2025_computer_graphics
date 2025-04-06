@@ -37,6 +37,9 @@ bool Application::Startup()
 
     aie::ImGui_Init(window, true);
 
+    // set the camera's starting position
+    camera = new Camera(glm::vec3(-0.05, 1.67, 1.42), -83.8, -29.9f);
+
     s_instance = this;
     glfwSetCursorPosCallback(window, &Application::SetMousePosition);
 
@@ -48,8 +51,9 @@ bool Application::Startup()
     m_phongShader.loadShader(aie::eShaderStage::VERTEX, "../bin/Shaders/Vertex/phong.vert");
     m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "../bin/Shaders/Fragment/phong.frag");
 
-    directionalLight.colour = { 0, 1, 0 };
-    m_ambientLight = { 1, 0, 0 };
+    directionalLight.direction = { -0.577, -0.577,-0.577 };
+    directionalLight.colour = { 1,1,1 };
+    m_ambientLight = { 0,0,0};
 
     if (!shader.link())
     {
@@ -62,15 +66,31 @@ bool Application::Startup()
         printf("Shader Error: %s\n", m_phongShader.getLastError());
         return false;
     }
+    
     soulspearMesh.InitialiseFromFile("../bin/Models/stanford/soulspear.obj");
     soulspearMesh.LoadMaterial("../bin/Models/stanford/soulspear.mtl");
-    soulspearMesh.LoadTexture("../bin/Textures/soulspear_diffuse.tga");
+    dragonMesh.InitialiseFromFile("../bin/Models/stanford/dragon.obj");
+    dragonMesh.LoadMaterial("../bin/Models/stanford/dragon.mtl");
+    deerMaskMesh.InitialiseFromFile("../bin/Models/deer.skull.mask.obj");
+    deerMaskMesh.LoadMaterial("../bin/Models/deer.skull.mask.normal");
+    
+    //soulspearMesh.LoadTexture("../bin/Textures/soulspear_diffuse.tga");
     quadMesh.LoadTexture("../bin/Textures/four_diffuse.tga");
 
     soulspearTransform = { 0.5, 0, 0, 0,
                        0, 0.5, 0, 0,
                        0, 0, 0.5, 0,
                        0, 0, 0, 1 };
+
+    dragonTransform = { 0.5, 0, 0, 0,
+                       0, 0.5, 0, 0,
+                       0, 0, 0.5, 0,
+                       0, 0, 0, 1 };
+
+    deerMaskTransform = { 50, 0, 0, 0,
+                   0, 50, 0, 0,
+                   0, 0, 50, 0,
+                   0, 0, 0, 1 };
 
     quadMesh.InitialiseQuad();
 
@@ -96,20 +116,26 @@ bool Application::Update(float dt)
 
     deltaTime += dt;
 
-    camera.Update(dt, window);
+    camera->Update(dt, window);
 
     m_lastMousePosition = m_mousePosition;
 
     // Put your updates here
     float time = glfwGetTime();
         
+    
     ImGui::Begin("Light Settings");
     ImGui::DragFloat3("Ambient Light", &m_ambientLight[0], 0.01f, -1.0f, 1.0f, "%.2f");
-    ImGui::DragFloat3("Sunlight Direction", &directionalLight.direction[0], 0.1f, -1.0f, 1.0f);
-    ImGui::DragFloat3("Sunlight Colour", &directionalLight.colour[0], 0.1f, 0.0f, 2.0f);
+    ImGui::DragFloat3("Sunlight Direction", &directionalLight.direction[0], 0.01f, -1.0f, 1.0f);
+    ImGui::DragFloat3("Sunlight Colour", &directionalLight.colour[0], 0.01f, 0.0f, 2.0f);
     ImGui::End();
+    
+
+    
 
     soulspearMesh.Update(dt);
+    //dragonMesh.Update(dt);
+    //deerMaskMesh.Update(dt);
     quadMesh.Update(dt);
 
     // listens for inputs
@@ -128,34 +154,39 @@ void Application::Draw()
     aie::Gizmos::addTransform(glm::mat4(1));
 
     //aie::Gizmos::draw(projection * view);
-    glm::mat4 pv = camera.GetProjectionMatrix(windowWidth, windowHeight) * camera.GetViewMatrix();
-
-    // bind shader
-    shader.bind();
+    glm::mat4 pv = camera->GetProjectionMatrix(windowWidth, windowHeight) * camera->GetViewMatrix();
 
     // bind transform
     auto pvm = pv * soulspearTransform;
-    shader.bindUniform("ProjectionViewModel", pvm);
+
 
     // bind phong shader program
     m_phongShader.bind();
-       
+    
     // bind transform and lighting
-    m_phongShader.bindUniform("ProjectionViewModel", pvm);
-    m_phongShader.bindUniform("ModelMatrix", soulspearTransform);
+    
     m_phongShader.bindUniform("AmbientColour", m_ambientLight);
     m_phongShader.bindUniform("LightColour", directionalLight.colour);
+    m_phongShader.bindUniform("CameraPosition", camera->GetPosition());
+    
     m_phongShader.bindUniform("LightDirection", directionalLight.direction);
+    m_phongShader.bindUniform("ProjectionViewModel", pvm);
+    m_phongShader.bindUniform("ModelMatrix", soulspearTransform);
 
-    m_phongShader.bindUniform("cameraPosition", camera.GetPosition());
+    
 
     soulspearMesh.ApplyMaterial(&m_phongShader);
     soulspearMesh.Draw();
+    //deerMaskMesh.ApplyMaterial(&m_phongShader);
+    //deerMaskMesh.Draw();
+    //dragonMesh.ApplyMaterial(&m_phongShader);
+    //dragonMesh.Draw();
 
     // draw quad
     pvm = pv * quadTransform;
     m_phongShader.bindUniform("ProjectionViewModel", pvm);
     m_phongShader.bindUniform("ModelMatrix", quadTransform);
+
     quadMesh.ApplyMaterial(&m_phongShader);
     quadMesh.Draw();
 
@@ -178,6 +209,8 @@ void Application::Draw()
 
 void Application::Shutdown()
 {
+    delete camera;
+    
     aie::ImGui_Shutdown();
     aie::Gizmos::destroy();
     glfwDestroyWindow(window);

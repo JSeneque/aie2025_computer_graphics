@@ -1,7 +1,7 @@
 #include "Application.h"
 #include "Camera.h"
 #include <glm/ext.hpp>
-
+#include "imgui_glfw3.h"
 
 glm::vec3 Camera::GetPosition() const
 {
@@ -28,6 +28,12 @@ glm::mat4 Camera::GetProjectionMatrix(float w, float h)
 
 void Camera::Update(float dt, GLFWwindow* window)
 {
+    ImGui::Begin("Camera Settings");
+    ImGui::DragFloat3("Position", &m_position[0], 0.01f, -std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), "%.2f");
+    ImGui::DragFloat("Phi", &phi, 0.1f, -1.0f, 1.0f);
+    ImGui::DragFloat("Theta", &theta, 0.1f, 0.0f, 2.0f);
+    ImGui::End();
+    
     // calculate theta and phi in radians
     float thetaR = glm::radians(theta);
     float phiR = glm::radians(phi);

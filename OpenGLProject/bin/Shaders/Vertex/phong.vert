@@ -16,6 +16,7 @@ uniform mat4 ModelMatrix;
 void main() {
 	vPosition = ModelMatrix * Position;
 	vNormal = (ModelMatrix * Normal).xyz;
-	gl_Position = ProjectionViewModel * Position;
 	vTexCoords = TexCoords;
+	gl_Position = ProjectionViewModel * Position;
+	
 }

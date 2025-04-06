@@ -15,7 +15,8 @@ private:
 
 public:
 	Camera() {}
-	Camera(glm::vec3 initialPos) : m_position(initialPos), theta(0), phi(0), turnSpeed(0.1f) {};
+	Camera(glm::vec3 initialPos) : m_position(initialPos), theta(0), phi(0), turnSpeed(0.1f) {}
+	Camera(glm::vec3 initialPos, float _theta, float _phi) : m_position(initialPos), theta(_theta), phi(_phi), turnSpeed(0.1f) {}
 
 	glm::vec3 GetPosition() const;
 

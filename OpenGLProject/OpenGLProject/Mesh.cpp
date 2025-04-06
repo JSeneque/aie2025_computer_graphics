@@ -34,6 +34,11 @@ void Mesh::InitialiseQuad()
 	vertices[2].position = { -0.5f, 0, -0.5f, 1 };
 	vertices[3].position = { 0.5f, 0, -0.5f, 1 };
 
+	vertices[0].normal = { 0, 1, 0, 0 };
+	vertices[1].normal = { 0, 1, 0, 0 };
+	vertices[2].normal = { 0, 1, 0, 0 };
+	vertices[3].normal = { 0, 1, 0, 0 };
+
 	vertices[0].texCoord = { 0.0, 1.0 };
 	vertices[1].texCoord = { 1.0, 1.0 };
 	vertices[2].texCoord = { 0.0, 0.0 };
@@ -41,9 +46,9 @@ void Mesh::InitialiseQuad()
 
 	unsigned int indices[6] = { 0, 1, 2, 2, 1, 3 };
 
-	Ka = glm::vec3(0);
-	Kd = glm::vec3(1, 0.5, 1);
-	Ks = glm::vec3(1, 0, 1);
+	Ka = glm::vec3(0.25, 0.25, 0);
+	Kd = glm::vec3(0.5, 0.5, 0);
+	Ks = glm::vec3(1);
 	specularPower = 0.0f;
 
 	Initialise(4, vertices, 6, indices);
@@ -153,10 +158,10 @@ void Mesh::InitialiseFromFile(const char* fileName)
 void Mesh::Update(float dt)
 {
 	ImGui::Begin("Material Settings");
-	ImGui::DragFloat3("Ambient", &Ka[0], 0.1f, 0.0f, 2.0f);
-	ImGui::DragFloat3("Diffuse", &Kd[0], 0.1f, 0.0f, 2.0f);
-	ImGui::DragFloat3("Specular", &Ks[0], 0.1f, 0.0f, 2.0f);
-	ImGui::DragFloat("Strength", &specularPower, 0.1f, 0.0f, 256.0f);
+	ImGui::DragFloat3("Ambient", &Ka[0], 0.01f, 0.0f, 2.0f);
+	ImGui::DragFloat3("Diffuse", &Kd[0], 0.01f, 0.0f, 2.0f);
+	ImGui::DragFloat3("Specular", &Ks[0], 0.01f, 0.0f, 2.0f);
+	ImGui::DragFloat("Power", &specularPower, 0.01f, 0.0f, 256.0f);
 	ImGui::End();
 }
 
@@ -184,7 +189,7 @@ void Mesh::ApplyMaterial(aie::ShaderProgram* shader)
 	shader->bindUniform("specularPower", specularPower);
 
 	// bind the diffuse texture to 0
-	texture.bind(0);
+	mapKd.bind(0);
 	shader->bindUniform("diffuseTex", 0);
 }
 
@@ -194,6 +199,15 @@ void Mesh::LoadMaterial(const char* fileName)
 	std::string line;
 	std::string header;
 	char buffer[256];
+
+	// get the path part of the file name
+	std::string directory(fileName);
+	int index = directory.rfind('/');
+	if (index != -1)
+	{
+		directory = directory.substr(0, index + 1);
+	}
+	
 	while (!file.eof())
 	{
 		file.getline(buffer, 256);
@@ -208,12 +222,18 @@ void Mesh::LoadMaterial(const char* fileName)
 			ss >> header >> Kd.x >> Kd.y >> Kd.z;
 		else if (line.find("Ns") == 0)
 			ss >> header >> specularPower;
+		else if (line.find("map_Kd") == 0)
+		{
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			mapKd.load((directory + mapFileName).c_str());
+		}
 	}
 }
 
 void Mesh::LoadTexture(const char* fileName)
 {
-	texture.load(fileName);
+	mapKd.load(fileName);
 }
 
 

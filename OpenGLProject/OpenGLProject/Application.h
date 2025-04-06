@@ -22,13 +22,17 @@ protected:
 	GLFWwindow* window;
 
 	Mesh soulspearMesh;
+	Mesh dragonMesh;
 	Mesh quadMesh;
+	Mesh deerMaskMesh;
 
 	aie::ShaderProgram shader;
 	aie::ShaderProgram m_phongShader;
 
 	glm::mat4 soulspearTransform;
+	glm::mat4 dragonTransform;
 	glm::mat4 quadTransform;
+	glm::mat4 deerMaskTransform;
 
 	float deltaTime;
 
@@ -37,7 +41,7 @@ protected:
 	glm::vec2 m_mousePosition;
 	glm::vec2 m_lastMousePosition;
 	
-	Camera camera;
+	Camera* camera;
 
 	struct Light {
 		glm::vec3 direction;
