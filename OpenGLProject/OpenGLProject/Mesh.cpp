@@ -82,6 +82,10 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)32);
 
+	// enable forth element as tangents
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)40);
+
 	// bind indices if there are any
 	if (indexCount != 0) {
 		glGenBuffers(1, &ibo);
@@ -146,6 +150,11 @@ void Mesh::InitialiseFromFile(const char* fileName)
 		else
 		{
 			vertices[i].texCoord = glm::vec2(0, 0);
+		}
+
+		if (mesh->HasTangentsAndBitangents())
+		{
+			vertices[i].tangent = glm::vec4{mesh->mTangents[i].x,mesh->mTangents[i].y,mesh->mTangents[i].z,1};
 		}
 
 	}
