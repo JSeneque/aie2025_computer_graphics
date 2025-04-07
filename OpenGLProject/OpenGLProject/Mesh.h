@@ -4,6 +4,8 @@
 #include "Texture.h"
 #include <fstream>
 #include <sstream>
+#include <GLFW/glfw3native.h>
+#include <vector>
 
 struct Vertex {
 	glm::vec4 position;
@@ -24,7 +26,9 @@ protected:
 	glm::vec3 Ks;			// specular colour of the surface
 	float specularPower;	// tightness of specular highlights
 
-	aie::Texture mapKd;
+	aie::Texture mapKd;		// diffuse texture map
+	aie::Texture mapKs;		// specular texture map
+	aie::Texture mapBump;	// normal map
 
 public:
 	Mesh() : triCount(0), vao(0), vbo(0), ibo(0) {};
@@ -41,6 +45,8 @@ public:
 	void ApplyMaterial(aie::ShaderProgram* shader);
 	void LoadMaterial(const char* fileName);
 	void LoadTexture(const char* fileName);
+
+	void CalculateTangents(Vertex* vertices, unsigned int vertexCount, const std::vector<unsigned int>& indices);
 };
 
 
