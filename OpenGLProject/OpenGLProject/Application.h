@@ -22,19 +22,19 @@ protected:
 	GLFWwindow* window;
 
 	Mesh soulspearMesh;
-	Mesh dragonMesh;
-	Mesh quadMesh;
+	//Mesh dragonMesh;
+	//Mesh quadMesh;
 	//Mesh deerMaskMesh;
-	Mesh winterValleyMesh;
+	//Mesh winterValleyMesh;
 
 	aie::ShaderProgram shader;
 	aie::ShaderProgram m_phongShader;
 
 	glm::mat4 soulspearTransform;
-	glm::mat4 dragonTransform;
-	glm::mat4 quadTransform;
-	glm::mat4 deerMaskTransform;
-	glm::mat4 winterValleyTransform;
+	//glm::mat4 dragonTransform;
+	//glm::mat4 quadTransform;
+	//glm::mat4 deerMaskTransform;
+	//glm::mat4 winterValleyTransform;
 
 	float deltaTime;
 

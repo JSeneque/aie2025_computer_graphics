@@ -67,24 +67,24 @@ bool Application::Startup()
         return false;
     }
     
-    //soulspearMesh.InitialiseFromFile("../bin/Models/stanford/soulspear.obj");
-    //soulspearMesh.LoadMaterial("../bin/Models/stanford/soulspear.mtl");
+    soulspearMesh.InitialiseFromFile("../bin/Models/stanford/soulspear.obj");
+    soulspearMesh.LoadMaterial("../bin/Models/stanford/soulspear.mtl");
     //dragonMesh.InitialiseFromFile("../bin/Models/stanford/dragon.obj");
     //dragonMesh.LoadMaterial("../bin/Models/stanford/dragon.mtl");
     //deerMaskMesh.InitialiseFromFile("../bin/Models/deer.skull.mask.obj");
     //deerMaskMesh.LoadMaterial("../bin/Models/deer.skull.mask.normal");
 
-    winterValleyMesh.InitialiseFromFile("../bin/Models/TestCube.obj");
-    winterValleyMesh.LoadMaterial("../bin/Models/TestCube.mtl");
+    //winterValleyMesh.InitialiseFromFile("../bin/Models/TestCube.obj");
+    //winterValleyMesh.LoadMaterial("../bin/Models/TestCube.mtl");
     //soulspearMesh.LoadTexture("../bin/Textures/soulspear_diffuse.tga");
     //quadMesh.LoadTexture("../bin/Textures/four_diffuse.tga");
 
-    /*soulspearTransform = { 0.5, 0, 0, 0,
+    soulspearTransform = { 0.5, 0, 0, 0,
                        0, 0.5, 0, 0,
                        0, 0, 0.5, 0,
                        0, 0, 0, 1 };
 
-    dragonTransform = { 0.5, 0, 0, 0,
+    /*dragonTransform = { 0.5, 0, 0, 0,
                        0, 0.5, 0, 0,
                        0, 0, 0.5, 0,
                        0, 0, 0, 1 };*/
@@ -92,12 +92,12 @@ bool Application::Startup()
     /*deerMaskTransform = { 50, 0, 0, 0,
                    0, 50, 0, 0,
                    0, 0, 50, 0,
-                   0, 0, 0, 1 };*/
+                   0, 0, 0, 1 };
 
     winterValleyTransform = { 100, 0, 0, 0,
                        0, 100, 0, 0,
                        0, 0, 100, 0,
-                       0, 0, 0, 1 };
+                       0, 0, 0, 1 };*/
 
     //quadMesh.InitialiseQuad();
 
@@ -140,11 +140,11 @@ bool Application::Update(float dt)
 
     
 
-    //soulspearMesh.Update(dt);
+    soulspearMesh.Update(dt);
     //dragonMesh.Update(dt);
     //deerMaskMesh.Update(dt);
     //quadMesh.Update(dt);
-    winterValleyMesh.Update(dt);
+    //winterValleyMesh.Update(dt);
 
     // listens for inputs
     glfwPollEvents();
@@ -183,14 +183,14 @@ void Application::Draw()
 
     
 
-    //soulspearMesh.ApplyMaterial(&m_phongShader);
-    //soulspearMesh.Draw();
+    soulspearMesh.ApplyMaterial(&m_phongShader);
+    soulspearMesh.Draw();
     //deerMaskMesh.ApplyMaterial(&m_phongShader);
     //deerMaskMesh.Draw();
     //dragonMesh.ApplyMaterial(&m_phongShader);
     //dragonMesh.Draw();
-    winterValleyMesh.ApplyMaterial(&m_phongShader);
-    winterValleyMesh.Draw();
+    //winterValleyMesh.ApplyMaterial(&m_phongShader);
+    //winterValleyMesh.Draw();
 
     // draw quad
     /*pvm = pv * quadTransform;
