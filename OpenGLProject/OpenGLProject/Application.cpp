@@ -54,6 +54,11 @@ bool Application::Startup()
     directionalLight.direction = { -0.577, -0.577,-0.577 };
     directionalLight.colour = { 1,1,1 };
     m_ambientLight = { 0,0,0};
+    pointLight = {
+        glm::vec3(0, 5, 0),         // position above the model
+        glm::vec3(1, 0, 0),         // white light
+        5.0f                      // intensity
+    };
 
     if (!shader.link())
     {
@@ -135,8 +140,13 @@ bool Application::Update(float dt)
     ImGui::DragFloat3("Ambient Light", &m_ambientLight[0], 0.01f, -1.0f, 1.0f, "%.2f");
     ImGui::DragFloat3("Sunlight Direction", &directionalLight.direction[0], 0.01f, -1.0f, 1.0f);
     ImGui::DragFloat3("Sunlight Colour", &directionalLight.colour[0], 0.01f, 0.0f, 2.0f);
+    ImGui::DragFloat3("Point Light Colour", &pointLight.color[0], 0.01f, 0.0f, 2.0f);
     ImGui::End();
+
     
+    ImGui::Begin("Model Setting");
+    ImGui::Checkbox("Show Soulspear", &showSoulspear);
+    ImGui::End();
 
     
 
@@ -164,8 +174,7 @@ void Application::Draw()
     //aie::Gizmos::draw(projection * view);
     glm::mat4 pv = camera->GetProjectionMatrix(windowWidth, windowHeight) * camera->GetViewMatrix();
 
-    // bind transform
-    auto pvm = pv * soulspearTransform;
+
 
 
     // bind phong shader program
@@ -178,13 +187,23 @@ void Application::Draw()
     m_phongShader.bindUniform("CameraPosition", camera->GetPosition());
     
     m_phongShader.bindUniform("LightDirection", directionalLight.direction);
-    m_phongShader.bindUniform("ProjectionViewModel", pvm);
-    m_phongShader.bindUniform("ModelMatrix", soulspearTransform);
-
+    
     
 
-    soulspearMesh.ApplyMaterial(&m_phongShader);
-    soulspearMesh.Draw();
+    m_phongShader.bindUniform("pointLight.position", pointLight.position);
+    m_phongShader.bindUniform("pointLight.colour", pointLight.color);
+    m_phongShader.bindUniform("pointLight.intensity", pointLight.intensity);
+
+    if (showSoulspear)
+    {
+        // bind transform
+        auto pvm = pv * soulspearTransform;
+        m_phongShader.bindUniform("ProjectionViewModel", pvm);
+        m_phongShader.bindUniform("ModelMatrix", soulspearTransform);
+        soulspearMesh.ApplyMaterial(&m_phongShader);
+        soulspearMesh.Draw();
+        
+    }
     //deerMaskMesh.ApplyMaterial(&m_phongShader);
     //deerMaskMesh.Draw();
     //dragonMesh.ApplyMaterial(&m_phongShader);

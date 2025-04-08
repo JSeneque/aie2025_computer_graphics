@@ -5,9 +5,16 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Camera.h"
+struct PointLight
+{
+	glm::vec3 position;
+	glm::vec3 color;
+	float intensity;
+};
 
 struct Light {
 	glm::vec3 direction;
+	glm::vec3 colour;
 };
 
 class Application
@@ -45,13 +52,14 @@ protected:
 	
 	Camera* camera;
 
-	struct Light {
-		glm::vec3 direction;
-		glm::vec3 colour;
-	};
-
 	Light directionalLight;
 	glm::vec3 m_ambientLight;
+
+	PointLight pointLight;
+
+	// --- Show ON/OFF Models
+	bool showSoulspear = true;
+	
 
 	
 public:

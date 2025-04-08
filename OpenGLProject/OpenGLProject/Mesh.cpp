@@ -272,35 +272,43 @@ void Mesh::CalculateTangents(Vertex* vertices, unsigned int vertexCount, const s
 	glm::vec4* tan1 = new glm::vec4[vertexCount * 2];
 	glm::vec4* tan2 = tan1 + vertexCount;
 	memset(tan1, 0, vertexCount * sizeof(glm::vec4) * 2);
+	
 	unsigned int indexCount = (unsigned int)indices.size();
 	for (unsigned int a = 0; a < indexCount; a += 3) {
 		long i1 = indices[a];
 		long i2 = indices[a + 1];
 		long i3 = indices[a + 2];
+		
 		const glm::vec4& v1 = vertices[i1].position;
 		const glm::vec4& v2 = vertices[i2].position;
 		const glm::vec4& v3 = vertices[i3].position;
+		
 		const glm::vec2& w1 = vertices[i1].texCoord;
 		const glm::vec2& w2 = vertices[i2].texCoord;
 		const glm::vec2& w3 = vertices[i3].texCoord;
+		
 		float x1 = v2.x - v1.x;
 		float x2 = v3.x - v1.x;
 		float y1 = v2.y - v1.y;
 		float y2 = v3.y - v1.y;
 		float z1 = v2.z - v1.z;
 		float z2 = v3.z - v1.z;
+		
 		float s1 = w2.x - w1.x;
 		float s2 = w3.x - w1.x;
 		float t1 = w2.y - w1.y;
 		float t2 = w3.y - w1.y;
+		
 		float r = 1.0F / (s1 * t2 - s2 * t1);
 		glm::vec4 sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r,
 		(t2 * z1 - t1 * z2) * r, 0);
 		glm::vec4 tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r,
 		(s1 * z2 - s2 * z1) * r, 0);
+		
 		tan1[i1] += sdir;
 		tan1[i2] += sdir;
 		tan1[i3] += sdir;
+		
 		tan2[i1] += tdir;
 		tan2[i2] += tdir;
 		tan2[i3] += tdir;
@@ -316,6 +324,7 @@ void Mesh::CalculateTangents(Vertex* vertices, unsigned int vertexCount, const s
 		vertices[a].tangent.w = (glm::dot(glm::cross(glm::vec3(n),
 		glm::vec3(t)), glm::vec3(tan2[a])) < 0.0F) ? 1.0F : -1.0F;
 	}
+	
 	delete[] tan1;
 }
 

@@ -1,6 +1,12 @@
 // classic Phong fragment
 #version 410
 
+struct PointLight {
+	vec3 position;
+	vec3 colour;
+	float intensity;
+};
+
 in vec4 vPosition;
 in vec3 vNormal;
 in vec2 vTexCoords;
@@ -21,6 +27,10 @@ uniform float specularPower;
 uniform sampler2D diffuseTex;
 uniform sampler2D specularTex;
 uniform sampler2D normalTex;
+
+// point light
+uniform PointLight pointLight;
+
 
 out vec4 FragColour;
 
@@ -67,16 +77,27 @@ void main()
 	vec3 textureSpecular = texture(specularTex, vTexCoords).rgb;
 	vec3 textureNormal = texture(normalTex, vTexCoords).rgb;
 
-	N = TBN * (textureNormal * 2 - 1);
+	N = TBN * (textureNormal * 2.0 - 1.0);
 	
 	float lambertTerm = CalculateLambertTerm(N, L);
 	float specularTerm = CalculateSpecularTerm(N, L);
 
-
-	// doing the * 2 - 1 put the value into a proper range -1 to 1
+	// === Directional Light ===
+	vec3 directionalLighting = CalculateAmbientColour(textureDiffuse) + CalculateDiffuse(lambertTerm, textureDiffuse) + CalculateSpecular(specularTerm, textureSpecular);
 	
-	// output lambert as grayscale
-	FragColour = vec4 ( CalculateAmbientColour(textureDiffuse) + CalculateDiffuse(lambertTerm, textureDiffuse) + CalculateSpecular(specularTerm, textureSpecular), 1);
-	//FragColour = vec4(N, 1);
-	//FragColour = vec4 (lambertTerm, lambertTerm, lambertTerm, 1);
+	// === Point Light ===
+	vec3 pointLightDir = normalize(pointLight.position - vPosition.xyz);
+	float lambertTermPoint = CalculateLambertTerm(N, pointLightDir);
+	float specularTermPoint = CalculateSpecularTerm(N, pointLightDir);
+	
+	// === Attenuation ===
+	float distance = length(pointLight.position - vPosition.xyz);
+	float attenuation = 1.0 / (distance * distance);
+	
+	vec3 pointDiffuse = pointLight.colour * Kd * lambertTermPoint * textureDiffuse;
+	vec3 pointSpecular = pointLight.colour * Ks * specularTermPoint * textureSpecular;
+	vec3 pointLighting = (pointDiffuse + pointSpecular) * pointLight.intensity * attenuation;
+	
+	// === Final Output ===
+	FragColour = vec4 (directionalLighting + pointLighting, 1.0);
 }
