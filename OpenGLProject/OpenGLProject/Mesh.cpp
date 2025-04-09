@@ -160,10 +160,10 @@ void Mesh::InitialiseFromFile(const char* fileName)
 				mesh->mTangents[i].z,
 				1};
 		}
-		if (!mesh->HasTangentsAndBitangents())
-			CalculateTangents(vertices, numV, indices);
-
 	}
+	
+	if (!mesh->HasTangentsAndBitangents())
+		CalculateTangents(vertices, numV, indices);
 
 	Initialise(numV, vertices, indices.size(), indices.data());
 	delete[] vertices;
@@ -271,6 +271,7 @@ void Mesh::CalculateTangents(Vertex* vertices, unsigned int vertexCount, const s
 {
 	glm::vec4* tan1 = new glm::vec4[vertexCount * 2];
 	glm::vec4* tan2 = tan1 + vertexCount;
+
 	memset(tan1, 0, vertexCount * sizeof(glm::vec4) * 2);
 	
 	unsigned int indexCount = (unsigned int)indices.size();

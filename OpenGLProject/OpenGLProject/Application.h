@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Camera.h"
+
 struct PointLight
 {
 	glm::vec3 position;
@@ -55,11 +56,13 @@ protected:
 	Light directionalLight;
 	glm::vec3 m_ambientLight;
 
-	PointLight pointLight;
+	PointLight pointLight1;
+	PointLight pointLight2;
 
 	// --- Show ON/OFF Models
 	bool showSoulspear = true;
-	
+	bool showPointLight1 = true;
+	bool showPointLight2 = true;
 
 	
 public:

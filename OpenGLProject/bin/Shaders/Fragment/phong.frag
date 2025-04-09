@@ -29,8 +29,8 @@ uniform sampler2D specularTex;
 uniform sampler2D normalTex;
 
 // point light
-uniform PointLight pointLight;
-
+uniform PointLight pointLight1	;
+uniform PointLight pointLight2;
 
 out vec4 FragColour;
 
@@ -86,17 +86,18 @@ void main()
 	vec3 directionalLighting = CalculateAmbientColour(textureDiffuse) + CalculateDiffuse(lambertTerm, textureDiffuse) + CalculateSpecular(specularTerm, textureSpecular);
 	
 	// === Point Light ===
-	vec3 pointLightDir = normalize(pointLight.position - vPosition.xyz);
-	float lambertTermPoint = CalculateLambertTerm(N, pointLightDir);
-	float specularTermPoint = CalculateSpecularTerm(N, pointLightDir);
+	vec3 pointLight1Dir = normalize(pointLight1.position - vPosition.xyz);
+	vec3 pointLight2Dir = normalize(pointLight2.position - vPosition.xyz);
+	float lambertTermPoint = CalculateLambertTerm(N, pointLight1Dir);
+	float specularTermPoint = CalculateSpecularTerm(N, pointLight1Dir);
 	
 	// === Attenuation ===
-	float distance = length(pointLight.position - vPosition.xyz);
+	float distance = length(pointLight1.position - vPosition.xyz);
 	float attenuation = 1.0 / (distance * distance);
 	
-	vec3 pointDiffuse = pointLight.colour * Kd * lambertTermPoint * textureDiffuse;
-	vec3 pointSpecular = pointLight.colour * Ks * specularTermPoint * textureSpecular;
-	vec3 pointLighting = (pointDiffuse + pointSpecular) * pointLight.intensity * attenuation;
+	vec3 pointDiffuse = pointLight1.colour * Kd * lambertTermPoint * textureDiffuse;
+	vec3 pointSpecular = pointLight1.colour * Ks * specularTermPoint * textureSpecular;
+	vec3 pointLighting = (pointDiffuse + pointSpecular) * pointLight1.intensity * attenuation;
 	
 	// === Final Output ===
 	FragColour = vec4 (directionalLighting + pointLighting, 1.0);

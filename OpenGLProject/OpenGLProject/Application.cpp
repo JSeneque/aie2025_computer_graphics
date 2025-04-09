@@ -54,8 +54,14 @@ bool Application::Startup()
     directionalLight.direction = { -0.577, -0.577,-0.577 };
     directionalLight.colour = { 1,1,1 };
     m_ambientLight = { 0,0,0};
-    pointLight = {
+    pointLight1 = {
         glm::vec3(0, 5, 0),         // position above the model
+        glm::vec3(1, 0, 0),         // white light
+        5.0f                      // intensity
+    };
+
+    pointLight2 = {
+        glm::vec3(1, 5, 0),         // position above the model
         glm::vec3(1, 0, 0),         // white light
         5.0f                      // intensity
     };
@@ -140,7 +146,8 @@ bool Application::Update(float dt)
     ImGui::DragFloat3("Ambient Light", &m_ambientLight[0], 0.01f, -1.0f, 1.0f, "%.2f");
     ImGui::DragFloat3("Sunlight Direction", &directionalLight.direction[0], 0.01f, -1.0f, 1.0f);
     ImGui::DragFloat3("Sunlight Colour", &directionalLight.colour[0], 0.01f, 0.0f, 2.0f);
-    ImGui::DragFloat3("Point Light Colour", &pointLight.color[0], 0.01f, 0.0f, 2.0f);
+    ImGui::DragFloat3("Point Light 1 Colour", &pointLight1.color[0], 0.01f, 0.0f, 2.0f);
+    ImGui::DragFloat3("Point Light 2 Colour", &pointLight2.color[0], 0.01f, 0.0f, 2.0f);
     ImGui::End();
 
     
@@ -190,9 +197,12 @@ void Application::Draw()
     
     
 
-    m_phongShader.bindUniform("pointLight.position", pointLight.position);
-    m_phongShader.bindUniform("pointLight.colour", pointLight.color);
-    m_phongShader.bindUniform("pointLight.intensity", pointLight.intensity);
+    m_phongShader.bindUniform("pointLight1.position", pointLight1.position);
+    m_phongShader.bindUniform("pointLight1.colour", pointLight1.color);
+    m_phongShader.bindUniform("pointLight1.intensity", pointLight1.intensity);
+    m_phongShader.bindUniform("pointLight2.position", pointLight2.position);
+    m_phongShader.bindUniform("pointLight2.colour", pointLight2.color);
+    m_phongShader.bindUniform("pointLight2s.intensity", pointLight2.intensity);
 
     if (showSoulspear)
     {

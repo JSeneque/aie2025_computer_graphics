@@ -162,6 +162,7 @@
     <ClCompile Include="Gizmos.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="imgui_glfw3.cpp" />
+    <ClCompile Include="Instance.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="OpenGLProject.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Gizmos.h" />
     <ClInclude Include="imgui_glfw3.h" />
+    <ClInclude Include="Instance.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
