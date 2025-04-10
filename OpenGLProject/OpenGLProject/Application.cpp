@@ -80,6 +80,7 @@ bool Application::Startup()
     
     soulspearMesh.InitialiseFromFile("../bin/Models/stanford/soulspear.obj");
     soulspearMesh.LoadMaterial("../bin/Models/stanford/soulspear.mtl");
+    
     //dragonMesh.InitialiseFromFile("../bin/Models/stanford/dragon.obj");
     //dragonMesh.LoadMaterial("../bin/Models/stanford/dragon.mtl");
     //deerMaskMesh.InitialiseFromFile("../bin/Models/deer.skull.mask.obj");
@@ -90,10 +91,12 @@ bool Application::Startup()
     //soulspearMesh.LoadTexture("../bin/Textures/soulspear_diffuse.tga");
     //quadMesh.LoadTexture("../bin/Textures/four_diffuse.tga");
 
-    soulspearTransform = { 0.5, 0, 0, 0,
+    glm::mat4 soulspearTransform = { 0.5, 0, 0, 0,
                        0, 0.5, 0, 0,
                        0, 0, 0.5, 0,
                        0, 0, 0, 1 };
+
+    m_spearInstance = new Instance(soulspearTransform, &soulspearMesh, &)
 
     /*dragonTransform = { 0.5, 0, 0, 0,
                        0, 0.5, 0, 0,

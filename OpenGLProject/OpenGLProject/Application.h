@@ -5,17 +5,13 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Instance.h"
 
 struct PointLight
 {
 	glm::vec3 position;
 	glm::vec3 color;
 	float intensity;
-};
-
-struct Light {
-	glm::vec3 direction;
-	glm::vec3 colour;
 };
 
 class Application
@@ -38,11 +34,7 @@ protected:
 	aie::ShaderProgram shader;
 	aie::ShaderProgram m_phongShader;
 
-	glm::mat4 soulspearTransform;
-	//glm::mat4 dragonTransform;
-	//glm::mat4 quadTransform;
-	//glm::mat4 deerMaskTransform;
-	//glm::mat4 winterValleyTransform;
+	Instance* m_spearInstance;
 
 	float deltaTime;
 
