@@ -5,14 +5,9 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Camera.h"
-#include "Instance.h"
+#include "Global.h"
 
-struct PointLight
-{
-	glm::vec3 position;
-	glm::vec3 color;
-	float intensity;
-};
+class Instance;
 
 class Application
 {
@@ -26,10 +21,6 @@ protected:
 	GLFWwindow* window;
 
 	Mesh soulspearMesh;
-	//Mesh dragonMesh;
-	//Mesh quadMesh;
-	//Mesh deerMaskMesh;
-	//Mesh winterValleyMesh;
 
 	aie::ShaderProgram shader;
 	aie::ShaderProgram m_phongShader;
@@ -48,11 +39,7 @@ protected:
 	Light directionalLight;
 	glm::vec3 m_ambientLight;
 
-	PointLight pointLight1;
-	PointLight pointLight2;
-
 	// --- Show ON/OFF Models
-	bool showSoulspear = true;
 	bool showPointLight1 = true;
 	bool showPointLight2 = true;
 

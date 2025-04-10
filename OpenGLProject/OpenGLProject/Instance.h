@@ -4,17 +4,11 @@
 #include "Application.h"
 #include "Camera.h"
 #include "Shader.h"
+#include "Global.h"
+
 
 class Mesh;
-class Light;
 class Camera;
-
-struct Light {
-    glm::vec3 direction;
-    glm::vec3 colour;
-};
-
-
 
 class Instance
 {

@@ -2,6 +2,7 @@
 #include "Gizmos.h"
 #include "glm/ext.hpp"
 #include "imgui_glfw3.h"
+#include "Instance.h"
 
 Application* Application::s_instance = nullptr;
 
@@ -54,17 +55,6 @@ bool Application::Startup()
     directionalLight.direction = { -0.577, -0.577,-0.577 };
     directionalLight.colour = { 1,1,1 };
     m_ambientLight = { 0,0,0};
-    pointLight1 = {
-        glm::vec3(0, 5, 0),         // position above the model
-        glm::vec3(1, 0, 0),         // white light
-        5.0f                      // intensity
-    };
-
-    pointLight2 = {
-        glm::vec3(1, 5, 0),         // position above the model
-        glm::vec3(1, 0, 0),         // white light
-        5.0f                      // intensity
-    };
 
     if (!shader.link())
     {
@@ -80,50 +70,17 @@ bool Application::Startup()
     
     soulspearMesh.InitialiseFromFile("../bin/Models/stanford/soulspear.obj");
     soulspearMesh.LoadMaterial("../bin/Models/stanford/soulspear.mtl");
-    
-    //dragonMesh.InitialiseFromFile("../bin/Models/stanford/dragon.obj");
-    //dragonMesh.LoadMaterial("../bin/Models/stanford/dragon.mtl");
-    //deerMaskMesh.InitialiseFromFile("../bin/Models/deer.skull.mask.obj");
-    //deerMaskMesh.LoadMaterial("../bin/Models/deer.skull.mask.normal");
-
-    //winterValleyMesh.InitialiseFromFile("../bin/Models/TestCube.obj");
-    //winterValleyMesh.LoadMaterial("../bin/Models/TestCube.mtl");
-    //soulspearMesh.LoadTexture("../bin/Textures/soulspear_diffuse.tga");
-    //quadMesh.LoadTexture("../bin/Textures/four_diffuse.tga");
+    soulspearMesh.LoadTexture("../bin/Textures/soulspear_diffuse.tga");
 
     glm::mat4 soulspearTransform = { 0.5, 0, 0, 0,
                        0, 0.5, 0, 0,
                        0, 0, 0.5, 0,
                        0, 0, 0, 1 };
 
-    m_spearInstance = new Instance(soulspearTransform, &soulspearMesh, &)
-
-    /*dragonTransform = { 0.5, 0, 0, 0,
-                       0, 0.5, 0, 0,
-                       0, 0, 0.5, 0,
-                       0, 0, 0, 1 };*/
-
-    /*deerMaskTransform = { 50, 0, 0, 0,
-                   0, 50, 0, 0,
-                   0, 0, 50, 0,
-                   0, 0, 0, 1 };
-
-    winterValleyTransform = { 100, 0, 0, 0,
-                       0, 100, 0, 0,
-                       0, 0, 100, 0,
-                       0, 0, 0, 1 };*/
-
-    //quadMesh.InitialiseQuad();
-
-    /*quadTransform = { 10.0, 0, 0, 0,
-                       0, 10.0, 0, 0,
-                       0, 0, 10.0, 0,
-                       0, 0, 0, 1 };*/
+    m_spearInstance = new Instance(soulspearTransform, &soulspearMesh, &m_phongShader, false);
 
     glClearColor(0.25f, 0.25f, 0.25f, 1);
     glEnable(GL_DEPTH_TEST);
-
-    
 }
 
 bool Application::Update(float dt)
@@ -143,28 +100,19 @@ bool Application::Update(float dt)
 
     // Put your updates here
     float time = glfwGetTime();
-        
     
     ImGui::Begin("Light Settings");
     ImGui::DragFloat3("Ambient Light", &m_ambientLight[0], 0.01f, -1.0f, 1.0f, "%.2f");
     ImGui::DragFloat3("Sunlight Direction", &directionalLight.direction[0], 0.01f, -1.0f, 1.0f);
     ImGui::DragFloat3("Sunlight Colour", &directionalLight.colour[0], 0.01f, 0.0f, 2.0f);
-    ImGui::DragFloat3("Point Light 1 Colour", &pointLight1.color[0], 0.01f, 0.0f, 2.0f);
-    ImGui::DragFloat3("Point Light 2 Colour", &pointLight2.color[0], 0.01f, 0.0f, 2.0f);
     ImGui::End();
 
     
-    ImGui::Begin("Model Setting");
-    ImGui::Checkbox("Show Soulspear", &showSoulspear);
-    ImGui::End();
-
-    
+    //ImGui::Begin("Model Setting");
+    //ImGui::Checkbox("Show Soulspear", &showSoulspear);
+    //ImGui::End();
 
     soulspearMesh.Update(dt);
-    //dragonMesh.Update(dt);
-    //deerMaskMesh.Update(dt);
-    //quadMesh.Update(dt);
-    //winterValleyMesh.Update(dt);
 
     // listens for inputs
     glfwPollEvents();
@@ -184,53 +132,37 @@ void Application::Draw()
     //aie::Gizmos::draw(projection * view);
     glm::mat4 pv = camera->GetProjectionMatrix(windowWidth, windowHeight) * camera->GetViewMatrix();
 
-
-
-
     // bind phong shader program
-    m_phongShader.bind();
+    //m_phongShader.bind();
     
     // bind transform and lighting
     
-    m_phongShader.bindUniform("AmbientColour", m_ambientLight);
-    m_phongShader.bindUniform("LightColour", directionalLight.colour);
-    m_phongShader.bindUniform("CameraPosition", camera->GetPosition());
+    //m_phongShader.bindUniform("AmbientColour", m_ambientLight);
+    //m_phongShader.bindUniform("LightColour", directionalLight.colour);
+    //m_phongShader.bindUniform("CameraPosition", camera->GetPosition());
     
-    m_phongShader.bindUniform("LightDirection", directionalLight.direction);
+    //m_phongShader.bindUniform("LightDirection", directionalLight.direction);
     
     
 
-    m_phongShader.bindUniform("pointLight1.position", pointLight1.position);
-    m_phongShader.bindUniform("pointLight1.colour", pointLight1.color);
-    m_phongShader.bindUniform("pointLight1.intensity", pointLight1.intensity);
-    m_phongShader.bindUniform("pointLight2.position", pointLight2.position);
-    m_phongShader.bindUniform("pointLight2.colour", pointLight2.color);
-    m_phongShader.bindUniform("pointLight2s.intensity", pointLight2.intensity);
+    //m_phongShader.bindUniform("pointLight1.position", pointLight1.position);
+    //m_phongShader.bindUniform("pointLight1.colour", pointLight1.color);
+    //m_phongShader.bindUniform("pointLight1.intensity", pointLight1.intensity);
+    //m_phongShader.bindUniform("pointLight2.position", pointLight2.position);
+    //m_phongShader.bindUniform("pointLight2.colour", pointLight2.color);
+    //m_phongShader.bindUniform("pointLight2s.intensity", pointLight2.intensity);
 
-    if (showSoulspear)
-    {
+    //if (showSoulspear)
+    //{
         // bind transform
-        auto pvm = pv * soulspearTransform;
-        m_phongShader.bindUniform("ProjectionViewModel", pvm);
-        m_phongShader.bindUniform("ModelMatrix", soulspearTransform);
-        soulspearMesh.ApplyMaterial(&m_phongShader);
-        soulspearMesh.Draw();
+        //auto pvm = pv * soulspearTransform;
+        //m_phongShader.bindUniform("ProjectionViewModel", pvm);
+        //m_phongShader.bindUniform("ModelMatrix", soulspearTransform);
+        //soulspearMesh.ApplyMaterial(&m_phongShader);
+       // soulspearMesh.Draw();
         
-    }
-    //deerMaskMesh.ApplyMaterial(&m_phongShader);
-    //deerMaskMesh.Draw();
-    //dragonMesh.ApplyMaterial(&m_phongShader);
-    //dragonMesh.Draw();
-    //winterValleyMesh.ApplyMaterial(&m_phongShader);
-    //winterValleyMesh.Draw();
-
-    // draw quad
-    /*pvm = pv * quadTransform;
-    m_phongShader.bindUniform("ProjectionViewModel", pvm);
-    m_phongShader.bindUniform("ModelMatrix", quadTransform);*/
-
-    /*quadMesh.ApplyMaterial(&m_phongShader);
-    quadMesh.Draw();*/
+    //}
+    m_spearInstance->Draw(camera, (float)windowWidth, (float)windowHeight, m_ambientLight, &directionalLight);
 
     glm::vec4 white{ 1 };
     glm::vec4 black{ 0, 0, 0, 1 };
