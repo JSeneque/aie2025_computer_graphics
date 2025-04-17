@@ -95,10 +95,11 @@ void main()
 	float distance = length(pointLight1.position - vPosition.xyz);
 	float attenuation = 1.0 / (distance * distance);
 	
-	vec3 pointDiffuse = pointLight1.colour * Kd * lambertTermPoint * textureDiffuse;
-	vec3 pointSpecular = pointLight1.colour * Ks * specularTermPoint * textureSpecular;
-	vec3 pointLighting = (pointDiffuse + pointSpecular) * pointLight1.intensity * attenuation;
+	//vec3 pointDiffuse = pointLight1.colour * Kd * lambertTermPoint * textureDiffuse;
+	//vec3 pointSpecular = pointLight1.colour * Ks * specularTermPoint * textureSpecular;
+	//vec3 pointLighting = (pointDiffuse + pointSpecular) * pointLight1.intensity * attenuation;
 	
 	// === Final Output ===
-	FragColour = vec4 (directionalLighting + pointLighting, 1.0);
+	FragColour = vec4 (directionalLighting, 1.0);
+	//FragColour = vec4 (textureSpecular, 1.0);
 }

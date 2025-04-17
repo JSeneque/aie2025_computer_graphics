@@ -1,10 +1,18 @@
 #include "Application.h"
 #include "Gizmos.h"
+#include "Instance.h"
+#include "Scene.h"
 #include "glm/ext.hpp"
 #include "imgui_glfw3.h"
-#include "Instance.h"
 
 Application* Application::s_instance = nullptr;
+
+Application::~Application()
+{
+    aie::Gizmos::destroy();
+
+    delete m_scene;
+}
 
 bool Application::Startup()
 {
@@ -47,20 +55,14 @@ bool Application::Startup()
     view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
     projection = glm::perspective(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.0f);
 
-    shader.loadShader(aie::eShaderStage::VERTEX, "../bin/Shaders/Vertex/Simple.vert");
-    shader.loadShader(aie::eShaderStage::FRAGMENT, "../bin/Shaders/Fragment/Simple.frag");
+    //shader.loadShader(aie::eShaderStage::VERTEX, "../bin/Shaders/Vertex/Simple.vert");
+    //shader.loadShader(aie::eShaderStage::FRAGMENT, "../bin/Shaders/Fragment/Simple.frag");
     m_phongShader.loadShader(aie::eShaderStage::VERTEX, "../bin/Shaders/Vertex/phong.vert");
     m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "../bin/Shaders/Fragment/phong.frag");
 
     directionalLight.direction = { -0.577, -0.577,-0.577 };
     directionalLight.colour = { 1,1,1 };
     m_ambientLight = { 0,0,0};
-
-    if (!shader.link())
-    {
-        printf("Shader Error: %s\n", shader.getLastError());
-        return false;
-    }
 
     if (!m_phongShader.link())
     {
@@ -70,15 +72,21 @@ bool Application::Startup()
     
     soulspearMesh.InitialiseFromFile("../bin/Models/stanford/soulspear.obj");
     soulspearMesh.LoadMaterial("../bin/Models/stanford/soulspear.mtl");
-    soulspearMesh.LoadTexture("../bin/Textures/soulspear_diffuse.tga");
+    soulspearMesh.LoadTexture("../bin/Models/stanford/soulspear_diffuse.tga");
 
     glm::mat4 soulspearTransform = { 0.5, 0, 0, 0,
                        0, 0.5, 0, 0,
                        0, 0, 0.5, 0,
                        0, 0, 0, 1 };
 
-    m_spearInstance = new Instance(soulspearTransform, &soulspearMesh, &m_phongShader, false);
+    //m_spearInstance = new Instance(soulspearTransform, &soulspearMesh, &m_phongShader, false);
+    //Light light;
+    //light.colour = {1,1,1};
+    //light.direction = glm::vec3(1, -1, 1);
 
+    m_scene = new Scene(camera, glm::vec2(windowWidth, windowHeight), &directionalLight, m_ambientLight);
+    
+    m_scene->AddInstance(new Instance(soulspearTransform, &soulspearMesh, &m_phongShader));
     glClearColor(0.25f, 0.25f, 0.25f, 1);
     glEnable(GL_DEPTH_TEST);
 }
@@ -132,6 +140,7 @@ void Application::Draw()
     //aie::Gizmos::draw(projection * view);
     glm::mat4 pv = camera->GetProjectionMatrix(windowWidth, windowHeight) * camera->GetViewMatrix();
 
+    m_scene->Draw();
     // bind phong shader program
     //m_phongShader.bind();
     
@@ -162,7 +171,7 @@ void Application::Draw()
        // soulspearMesh.Draw();
         
     //}
-    m_spearInstance->Draw(camera, (float)windowWidth, (float)windowHeight, m_ambientLight, &directionalLight);
+    //m_spearInstance->Draw(camera, (float)windowWidth, (float)windowHeight, m_ambientLight, &directionalLight);
 
     glm::vec4 white{ 1 };
     glm::vec4 black{ 0, 0, 0, 1 };

@@ -7,7 +7,8 @@
 #include "Camera.h"
 #include "Global.h"
 
-class Instance;
+//class Instance;
+class Scene;
 
 class Application
 {
@@ -22,11 +23,12 @@ protected:
 
 	Mesh soulspearMesh;
 
-	aie::ShaderProgram shader;
+	//aie::ShaderProgram shader;
 	aie::ShaderProgram m_phongShader;
 
-	Instance* m_spearInstance;
-
+	//Instance* m_spearInstance;
+	Scene* m_scene;
+	
 	float deltaTime;
 
 	static Application* s_instance;
@@ -40,12 +42,13 @@ protected:
 	glm::vec3 m_ambientLight;
 
 	// --- Show ON/OFF Models
-	bool showPointLight1 = true;
-	bool showPointLight2 = true;
+	//bool showPointLight1 = true;
+	//bool showPointLight2 = true;
 
 	
 public:
 	//Application() {}
+	~Application();
 	bool Startup();
 	bool Update(float dt);
 	void Draw();
