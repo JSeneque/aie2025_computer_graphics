@@ -19,6 +19,11 @@ uniform vec3 AmbientColour;
 uniform vec3 LightColour;
 uniform vec3 LightDirection;
 
+const int MAX_LIGHTS = 4;
+uniform int numLights;
+uniform vec3 PointLightColour[MAX_LIGHTS];
+uniform vec3 PointLightPosition[MAX_LIGHTS];
+
 uniform vec3 Ka;
 uniform vec3 Kd;
 uniform vec3 Ks;
@@ -27,10 +32,6 @@ uniform float specularPower;
 uniform sampler2D diffuseTex;
 uniform sampler2D specularTex;
 uniform sampler2D normalTex;
-
-// point light
-uniform PointLight pointLight1	;
-uniform PointLight pointLight2;
 
 out vec4 FragColour;
 
@@ -86,20 +87,27 @@ void main()
 	vec3 directionalLighting = CalculateAmbientColour(textureDiffuse) + CalculateDiffuse(lambertTerm, textureDiffuse) + CalculateSpecular(specularTerm, textureSpecular);
 	
 	// === Point Light ===
-	vec3 pointLight1Dir = normalize(pointLight1.position - vPosition.xyz);
-	vec3 pointLight2Dir = normalize(pointLight2.position - vPosition.xyz);
-	float lambertTermPoint = CalculateLambertTerm(N, pointLight1Dir);
-	float specularTermPoint = CalculateSpecularTerm(N, pointLight1Dir);
+	vec3 pointLightContribution = vec3( 0.0) ;
 	
-	// === Attenuation ===
-	float distance = length(pointLight1.position - vPosition.xyz);
-	float attenuation = 1.0 / (distance * distance);
-	
-	//vec3 pointDiffuse = pointLight1.colour * Kd * lambertTermPoint * textureDiffuse;
-	//vec3 pointSpecular = pointLight1.colour * Ks * specularTermPoint * textureSpecular;
-	//vec3 pointLighting = (pointDiffuse + pointSpecular) * pointLight1.intensity * attenuation;
+	for (int i = 0; i < numLights; ++i)
+	{
+		// create a vector between the point position and the vertex
+		vec3 lightDir = PointLightPosition[i] - vPosition.xyz;
+		// normalise the vector
+		vec3 L = normalize(lightDir);
+		
+		float lambert = CalculateLambertTerm(N, L);
+		float specular = CalculateSpecularTerm(N, L);
+		
+		vec3 diffuse = PointLightColour[i] * Kd * lambert * textureDiffuse;
+		vec3 specularCol = PointLightColour[i] * Ks * specular * textureSpecular;
+		
+		pointLightContribution += diffuse + specular;
+	}
+
 	
 	// === Final Output ===
-	FragColour = vec4 (directionalLighting, 1.0);
-	//FragColour = vec4 (textureSpecular, 1.0);
+	vec3 finalColour = directionalLighting + pointLightContribution;
+	FragColour = vec4 (finalColour, 1.0);
+
 }

@@ -55,14 +55,18 @@ bool Application::Startup()
     view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
     projection = glm::perspective(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.0f);
 
-    //shader.loadShader(aie::eShaderStage::VERTEX, "../bin/Shaders/Vertex/Simple.vert");
-    //shader.loadShader(aie::eShaderStage::FRAGMENT, "../bin/Shaders/Fragment/Simple.frag");
     m_phongShader.loadShader(aie::eShaderStage::VERTEX, "../bin/Shaders/Vertex/phong.vert");
     m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "../bin/Shaders/Fragment/phong.frag");
 
     directionalLight.direction = { -0.577, -0.577,-0.577 };
     directionalLight.colour = { 1,1,1 };
     m_ambientLight = { 0,0,0};
+
+    // add a red point light to the scene
+    Light redLight = Light(glm::vec3(5,3,0), glm::vec3(1,0,0), 2);
+    // add a red point light to the scene
+    Light greenLight = Light(glm::vec3(-5,3,0), glm::vec3(0,1,0), 2);
+    
 
     if (!m_phongShader.link())
     {
@@ -79,12 +83,10 @@ bool Application::Startup()
                        0, 0, 0.5, 0,
                        0, 0, 0, 1 };
 
-    //m_spearInstance = new Instance(soulspearTransform, &soulspearMesh, &m_phongShader, false);
-    //Light light;
-    //light.colour = {1,1,1};
-    //light.direction = glm::vec3(1, -1, 1);
-
     m_scene = new Scene(camera, glm::vec2(windowWidth, windowHeight), &directionalLight, m_ambientLight);
+
+    m_scene->AddPointLight(redLight);
+    m_scene->AddPointLight(greenLight);
     
     m_scene->AddInstance(new Instance(soulspearTransform, &soulspearMesh, &m_phongShader));
     glClearColor(0.25f, 0.25f, 0.25f, 1);
@@ -141,37 +143,7 @@ void Application::Draw()
     glm::mat4 pv = camera->GetProjectionMatrix(windowWidth, windowHeight) * camera->GetViewMatrix();
 
     m_scene->Draw();
-    // bind phong shader program
-    //m_phongShader.bind();
-    
-    // bind transform and lighting
-    
-    //m_phongShader.bindUniform("AmbientColour", m_ambientLight);
-    //m_phongShader.bindUniform("LightColour", directionalLight.colour);
-    //m_phongShader.bindUniform("CameraPosition", camera->GetPosition());
-    
-    //m_phongShader.bindUniform("LightDirection", directionalLight.direction);
-    
-    
 
-    //m_phongShader.bindUniform("pointLight1.position", pointLight1.position);
-    //m_phongShader.bindUniform("pointLight1.colour", pointLight1.color);
-    //m_phongShader.bindUniform("pointLight1.intensity", pointLight1.intensity);
-    //m_phongShader.bindUniform("pointLight2.position", pointLight2.position);
-    //m_phongShader.bindUniform("pointLight2.colour", pointLight2.color);
-    //m_phongShader.bindUniform("pointLight2s.intensity", pointLight2.intensity);
-
-    //if (showSoulspear)
-    //{
-        // bind transform
-        //auto pvm = pv * soulspearTransform;
-        //m_phongShader.bindUniform("ProjectionViewModel", pvm);
-        //m_phongShader.bindUniform("ModelMatrix", soulspearTransform);
-        //soulspearMesh.ApplyMaterial(&m_phongShader);
-       // soulspearMesh.Draw();
-        
-    //}
-    //m_spearInstance->Draw(camera, (float)windowWidth, (float)windowHeight, m_ambientLight, &directionalLight);
 
     glm::vec4 white{ 1 };
     glm::vec4 black{ 0, 0, 0, 1 };
@@ -193,6 +165,8 @@ void Application::Draw()
 void Application::Shutdown()
 {
     delete camera;
+
+    delete m_scene;
     
     aie::ImGui_Shutdown();
     aie::Gizmos::destroy();
